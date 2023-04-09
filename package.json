@@ -1,0 +1,22 @@
+{
+  "name": "borarachar.api",
+  "version": "1.0.0",
+  "description": "API do projeto BoraRachar Sou Junior",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BoraRachar/borarachar.api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BoraRachar/borarachar.api/issues"
+  },
+  "homepage": "https://github.com/BoraRachar/borarachar.api#readme"
+}
