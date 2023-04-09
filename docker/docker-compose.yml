@@ -1,0 +1,30 @@
+version: '3.8'
+
+volumes:
+    PgData: {}
+
+
+services:
+    database:
+        build: ./database
+        container_name: PgBoraRachar
+        restart: always
+        tty: true
+        volumes:
+            - PgData:/var/lib/postgresql
+        environment:
+            - POSTGRES_PASSWORD=boraRachar@2023!
+            - POSTGRES_DB=boraRachar
+        ports:
+            - '5432:5432'
+        expose:
+            - '5432'
+        networks:
+            - boraRachar
+
+
+    
+
+networks:
+    boraRachar:
+        driver: bridge
