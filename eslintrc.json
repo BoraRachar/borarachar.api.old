@@ -1,0 +1,81 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {"jsx": true},
+    "tsconfigRootDir": "."
+  },
+  "settings": {
+    "react": {"version": "detect"}
+  },
+  "env": {"es6": true, "browser": true, "jest": true, "node": true},
+  "extends": [
+    "eslint:recommended",
+    "next",
+    "next/core-web-vitals",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:import/recommended",
+    "prettier",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "jsx-a11y",
+    "react",
+    "prettier",
+    "react-hooks",
+    "@typescript-eslint",
+    "simple-import-sort"
+  ],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx"],
+      "parserOptions": {
+        "project": ["./tsconfig.json"]
+      },
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict"
+      ],
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/array-type": [
+          "warn",
+          {"default": "generic", "readonly": "generic"}
+        ],
+        "@typescript-eslint/non-nullable-type-assertion-style": "off"
+      }
+    }
+  ],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
+    "prettier/prettier": ["error", {"usePrettierrc": true}],
+    "no-console": "off",
+    "no-unused-vars": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/namespace": ["error", {"allowComputed": true}],
+    "prefer-object-spread": "warn",
+    "id-length": ["warn", {"min": 2, "exceptions": ["_", "a", "x", "y", "p"]}],
+    "sort-imports": "off",
+    "import/order": "off",
+    "simple-import-sort/imports": "error",
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["hrefLeft", "hrefRight"],
+        "aspects": ["invalidHref", "preferButton"]
+      }
+    ]
+  }
+}

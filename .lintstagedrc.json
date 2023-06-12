@@ -1,0 +1,7 @@
+{
+  "*.{ts,tsx}": [
+    "eslint --fix",
+    "jest --passWithNoTests",
+    "git add"    
+  ]
+}
