@@ -1,7 +1,7 @@
 {
   "*.{ts,tsx}": [
     "eslint --fix",
-    "jest --passWithNoTests",
+    "npm run test:staged",
     "git add"    
   ]
 }
