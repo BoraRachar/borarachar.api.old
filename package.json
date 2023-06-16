@@ -4,12 +4,14 @@
   "description": "",
   "author": "",
   "private": true,
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/BoraRachar/borarachar.api/blob/main/LICENSE"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/BoraRachar/borarachar.api/blob/main/LICENSE"
+    }
+  ],
   "scripts": {
-    "build": "nest build",
+    "build": "rimraf ./dist && nest build",
     "dev": "nest start --watch",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -23,7 +25,7 @@
     "test:ci": "npm test -- --coverage",
     "test:staged": "npm test -- --findRelatedTests",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"   
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -31,6 +33,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.1",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.6.3"
   },
