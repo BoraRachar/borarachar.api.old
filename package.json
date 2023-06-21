@@ -13,6 +13,8 @@
   "scripts": {
     "build": "rimraf ./dist && nest build",
     "dev": "nest start --watch",
+    "docker:up": "docker-compose -f ./.docker/docker-compose.yml up -d",
+    "docker:down": "docker-compose -f ./.docker/docker-compose.yml down",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "prepare": "husky install",
