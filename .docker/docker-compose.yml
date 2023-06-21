@@ -1,0 +1,24 @@
+version: '3.8'
+
+volumes:
+  dataBaseVol:
+
+networks:
+  BoraRachar: {}
+
+services:
+  database:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: "brDev"
+      POSTGRES_PASSWORD: "B0R@R012458!!"
+      POSTGRES_DB: "borarachaDB"
+    volumes:
+      - dataBaseVol:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - BoraRachar
+    restart: always
