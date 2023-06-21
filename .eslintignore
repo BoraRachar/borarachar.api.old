@@ -1,3 +1,7 @@
-node_modules
-dist
-coverage
+//**/node_modules/*
+node_modules/
+
+dist/
+coverage/
+prisma/
+migrations/
