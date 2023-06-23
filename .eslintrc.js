@@ -6,8 +6,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint/eslint-plugin',  'prettier'],
   extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
   ],
   root: true,
   env: {
@@ -18,8 +18,8 @@ module.exports = {
     'node_modules/',
     '**/node_modules/',
     '/**/node_modules/*',
-    'out/',
     'dist/',
+    'coverage/'
   ],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
