@@ -1,4 +1,4 @@
-import { AppModule } from "./app.module";
+import { AppModule } from "./infrastructure/modules/app.module";
 import { NestFactory } from "@nestjs/core";
 import type { SwaggerDocumentOptions } from "@nestjs/swagger";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";

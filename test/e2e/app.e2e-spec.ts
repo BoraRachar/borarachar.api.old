@@ -1,4 +1,4 @@
-import { AppModule } from "./../src/app.module";
+import { AppModule } from "../../src/infrastructure/modules/app.module";
 import type { INestApplication } from "@nestjs/common";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";

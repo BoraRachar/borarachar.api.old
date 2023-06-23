@@ -1,5 +1,5 @@
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
+import { AppController } from "../../src/application/controllers/app.controller";
+import { AppService } from "../../src/domain/services/app.service";
 import type { TestingModule } from "@nestjs/testing";
 import { Test } from "@nestjs/testing";
 

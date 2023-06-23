@@ -4,12 +4,7 @@
   "description": "",
   "author": "",
   "private": true,
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/BoraRachar/borarachar.api/blob/main/LICENSE"
-    }
-  ],
+  "license": "MIT",
   "scripts": {
     "build": "rimraf ./dist && nest build",
     "dev": "nest start --watch",
@@ -79,7 +74,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "test",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
