@@ -7,17 +7,17 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf ./dist && nest build",
-    "dev": "dotenv -e ./src/common/env/.env.development  nest start --watch",
+    "dev": "nest start --watch",
     "docker:up": "docker-compose -f ./.docker/docker-compose.yml up -d",
     "docker:down": "docker-compose -f ./.docker/docker-compose.yml down",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint . --config ./.eslintrc.js --ext js,jsx,ts,tsx --fix",
     "prepare": "husky install",
     "pre-commit": "lint-staged",
-    "prismix": "dotenv -e ./src/common/env/.env.development npx prismix && prisma format",
+    "prismix": "npx prismix && prisma format",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "dotenv -e dist/src/common/env/.env.production node dist/main",
+    "start:prod": "node dist/main",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:watch": "npm test -- --watch --runInBand",
     "test:ci": "npm test -- --coverage",
@@ -27,18 +27,13 @@
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
-    "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/jwt": "^10.1.0",
-    "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "@prisma/client": "^4.16.2",
-    "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "nestjs-prisma": "^0.20.1",
-    "passport": "^0.6.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^5.0.1",
     "rxjs": "^7.2.0",
@@ -70,7 +65,6 @@
     "lint-staged": "^13.2.2",
     "prettier": "^2.3.2",
     "prisma": "^4.16.0",
-    "prismix": "^1.0.22",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
     "ts-jest": "29.1.0",
@@ -97,6 +91,6 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed/seed.ts"
+    "seed": "ts-node prisma/seed.ts"
   }
 }
