@@ -18,7 +18,7 @@
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:prod": "dotenv -e dist/src/common/env/.env.production node dist/main",
-    "test": "dotenv -e .src/common/env/.env.testing  jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:watch": "npm test -- --watch --runInBand",
     "test:ci": "npm test -- --coverage",
     "test:staged": "npm test -- --findRelatedTests",
