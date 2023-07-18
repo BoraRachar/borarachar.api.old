@@ -4,15 +4,8 @@ import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class DemoService {
-  @Inject(ConfigService)
-  public config: ConfigService;
-
-  create(createDto: CreateDemoDto) {
-    return new CreateDemoDto();
-  }
-
   findOne(id: number) {
-    return new CreateDemoDto();
+    if (id != null) return new CreateDemoDto();
   }
 
   findAll() {
@@ -20,6 +13,6 @@ export class DemoService {
   }
 
   remove(id: number) {
-    return "Deletado com sucesso";
+    if (id != null) return "Deletado com sucesso";
   }
 }

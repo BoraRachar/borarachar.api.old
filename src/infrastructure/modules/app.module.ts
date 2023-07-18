@@ -6,6 +6,7 @@ import { DemoService } from "../../domain/services/demo.service";
 import { AppService } from "../../domain/services/app.service";
 import { PrismaConfigService } from "../database/config/PrismaConfigService";
 import { getEnvPath } from "src/common/helper/env.helper";
+import { AuthGoogleModule } from "./authgoogle.module";
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -16,6 +17,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
       isGlobal: true,
       useClass: PrismaConfigService,
     }),
+    AuthGoogleModule,
   ],
   controllers: [DemoController],
   providers: [AppService, DemoService],
