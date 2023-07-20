@@ -40,5 +40,6 @@ package-lock.json
 
 # env
 .env
-./src/common/env/production.env
-./src/common/env/development.env
+./src/common/env/.env.development
+./src/common/env/.env.production
+./src/common/env/.env.testing

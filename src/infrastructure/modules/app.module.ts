@@ -5,17 +5,16 @@ import { DemoController } from "../../application/controllers/demo.controller";
 import { DemoService } from "../../domain/services/demo.service";
 import { AppService } from "../../domain/services/app.service";
 import { PrismaConfigService } from "../database/config/PrismaConfigService";
-import { getEnvPath } from "src/common/helper/env.helper";
-
-const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
+import { AuthModule } from "./auth.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath, isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule.forRootAsync({
       isGlobal: true,
       useClass: PrismaConfigService,
     }),
+    AuthModule,
   ],
   controllers: [DemoController],
   providers: [AppService, DemoService],
