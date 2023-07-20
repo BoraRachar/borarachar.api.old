@@ -1,40 +1,28 @@
-FROM node:18-alpine As development
+FROM node:18.4-alpine as builder
 
 WORKDIR /usr/src/app
 
-COPY --chown=node:node package*.json ./
+COPY package.json ./
 
-RUN npm ci
+RUN npm install
 
-COPY --chown=node:node . .
-
-USER node
-
-FROM node:18-alpine As build
-
-WORKDIR /usr/src/app
-
-COPY --chown=node:node package*.json ./
-
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-
-COPY --chown=node:node . .
+COPY . .
 
 RUN npm run build
 
+FROM node:lts-slim as production
+
 ENV NODE_ENV production
-
-RUN npm ci --only=production && npm cache clean --force
-
 USER node
 
-FROM node:18-alpine As production
+WORKDIR /usr/src/app
 
-RUN npm install pm2@latest -g
+COPY package.json ./
 
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+RUN npm install --omit=dev
 
-CMD [ "pm2", "start", "dist/main.js", "--name borarachar_api" ]
+COPY --from=builder /usr/src/app/dist ./dist
 
-RUN pm2 startup sys
+EXPOSE 3000
+
+CMD [ "node", "dist/main.js" ]

@@ -3,7 +3,7 @@ apps:
     name: borarachar-api
     watch: true
     instances: 1
-    exec_mode: cluster
+    autorestart: true
     env:
       PORT: ${SERVER_PORT}
       NODE_ENV: development
