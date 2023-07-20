@@ -1,29 +1,29 @@
 import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
 
-@ApiTags("GoogleLogin")
+@ApiTags("InstagramLogin")
 @Controller("")
-export class AuthGoogleController {
-  @Get("google")
+export class AuthinstagramController {
+  @Get("instagram")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(AuthGuard("google"))
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async callback(@Req() request) {}
+  async instagram(@Req() request) {}
 
-  @Get("/google/callback")
+  @Get("/instagram/callback")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(AuthGuard("google"))
-  async googleAuthRedirect(@Req() request, @Res() response) {
+  async instagramAuthRedirect(@Req() request, @Res() response) {
     return response.json(request.user);
   }
 }

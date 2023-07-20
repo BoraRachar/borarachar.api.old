@@ -15,14 +15,6 @@ import { DemoService } from "../../domain/services/demo.service";
 export class DemoController {
   constructor(private readonly demoService: DemoService) {}
 
-  @Post()
-  @ApiCreatedResponse({ description: "Created Succesfully" })
-  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
-  @ApiForbiddenResponse({ description: "Unauthorized Request" })
-  create(@Body() createDemoDto: CreateDemoDto) {
-    return this.demoService.create(createDemoDto);
-  }
-
   @Get()
   @ApiOkResponse({ description: "The resources were returned successfully" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })

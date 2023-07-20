@@ -7,7 +7,7 @@ import { GoogleProvider } from "../../../infrastructure/providers/google.provide
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
-  constructor(provider: GoogleProvider) {
+  constructor(private readonly provider: GoogleProvider) {
     super({
       clientID: provider.clientID,
       clientSecret: provider.clientSecret,
@@ -22,14 +22,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name, emails } = profile;
-
-    const user = {
-      email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
-      accessToken,
-    };
-    done(null, user);
+    done(null, profile);
   }
 }

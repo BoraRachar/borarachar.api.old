@@ -9,8 +9,7 @@ export class AuthGoogleService {
       return "Usuario não cadastrado no Google";
     }
     return {
-      message: "Informações do Usuario",
-      user: req.user,
+      user: JSON.stringify(req.user),
     };
   }
 }
