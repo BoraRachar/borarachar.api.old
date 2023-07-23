@@ -7,6 +7,7 @@ import { AppService } from "../../domain/services/app.service";
 import { PrismaConfigService } from "../database/config/PrismaConfigService";
 import { getEnvPath } from "src/common/helper/env.helper";
 import { AuthGoogleModule } from "./authgoogle.module";
+import { AuthInstagramModule } from "./auth-instagram.module";
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -18,6 +19,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
       useClass: PrismaConfigService,
     }),
     AuthGoogleModule,
+    AuthInstagramModule,
   ],
   controllers: [DemoController],
   providers: [AppService, DemoService],

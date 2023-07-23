@@ -5,16 +5,16 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { AuthGuard } from "@nestjs/passport";
+import { InstagramOauthGuard } from "../../domain/core/guards/instagram-oauth.guard";
 
 @ApiTags("InstagramLogin")
 @Controller("")
-export class AuthinstagramController {
+export class AuthInstagramController {
   @Get("instagram")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(InstagramOauthGuard)
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async instagram(@Req() request) {}
 
@@ -22,7 +22,7 @@ export class AuthinstagramController {
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
-  @UseGuards(AuthGuard("google"))
+  @UseGuards(InstagramOauthGuard)
   async instagramAuthRedirect(@Req() request, @Res() response) {
     return response.json(request.user);
   }

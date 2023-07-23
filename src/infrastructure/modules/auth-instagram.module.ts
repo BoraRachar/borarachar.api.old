@@ -1,13 +1,12 @@
 import { Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
-import { AuthGoogleController } from "../../application/controllers/authgoogle.controller";
-import { AuthGoogleService } from "../../domain/services/authgoogle.service";
-import { GoogleStrategy } from "../../domain/core/strategies/google.strategy";
-import { GoogleProvider } from "../providers/google.provider";
+import { InstagramStrategy } from "../../domain/core/strategies/instagram.strategy";
+import { InstagramProvider } from "../providers/instagram.provider";
+import { AuthInstagramController } from "../../application/controllers/authinstagram.controller";
 
 @Module({
   imports: [PassportModule],
-  controllers: [AuthGoogleController],
-  providers: [AuthGoogleService, GoogleStrategy, GoogleProvider],
+  controllers: [AuthInstagramController],
+  providers: [InstagramStrategy, InstagramProvider],
 })
 export class AuthInstagramModule {}
