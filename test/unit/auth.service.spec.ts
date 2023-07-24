@@ -28,16 +28,19 @@ describe("AuthController", () => {
       }
     }
 
-    const mockComparePass = () => {
-
+    class MockHashPassword {
+      comparePass = jest.fn((pass: string, hash: string) => {
+        return true;
+      });
     }
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, JwtService, {provide: PrismaService, useValue: mockPrisma}, {provide: HashPassword, useFactory: () => mockComparePass()}],
+      providers: [AuthService, JwtService, {provide: PrismaService, useValue: mockPrisma}, {provide: HashPassword, useClass: MockHashPassword}],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
+    hashPassword = module.get<HashPassword>(HashPassword)
   });
 
   afterEach(() => {
@@ -68,10 +71,30 @@ describe("AuthController", () => {
       })
     });
 
-    // it('should call comparePass if prisma returns a user', async () => {
-    //   (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
-    //   await service.validateUser(email, password)
+    it('should call comparePass if prisma returns a user', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+      await service.validateUser(email, password)
 
-    // });
+      expect(hashPassword.comparePass).toBeCalledTimes(1)
+    });
+
+    it('should call comparePass with the correct params', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+      await service.validateUser(email, password)
+
+      expect(hashPassword.comparePass).toBeCalledWith(password, user.password)
+    });
+
+    it('should return user email if passwords match', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+
+      expect(await service.validateUser(email, password)).toEqual({
+        email: user.email
+      })
+    });
   });
+
+  describe('login()', () => {
+    
+  })
 });
