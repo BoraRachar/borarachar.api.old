@@ -1,11 +1,11 @@
 import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "./prisma.service";
-import { comparePass } from "../core/hashPassword";
+import { HashPassword } from "../core/hashPassword";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(private prisma: PrismaService, private jwtService: JwtService, private hashPassword: HashPassword) {}
 
   async validateUser(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
@@ -13,7 +13,7 @@ export class AuthService {
     });
 
     if (user) {
-      const isPasswordMathing = await comparePass(password, user.password);
+      const isPasswordMathing = await this.hashPassword.comparePass(password, user.password);
 
       if (isPasswordMathing) return { email: user.email };
     }

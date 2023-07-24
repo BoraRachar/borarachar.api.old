@@ -7,6 +7,7 @@ import { AuthController } from "../../application/controllers/auth.controller";
 import { PrismaModule } from "nestjs-prisma";
 import { PrismaService } from "../../domain/services/prisma.service";
 import "dotenv/config";
+import { HashPassword } from "src/domain/core/hashPassword";
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import "dotenv/config";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, PrismaService],
+  providers: [AuthService, LocalStrategy, PrismaService, HashPassword],
 })
 export class AuthModule {}
