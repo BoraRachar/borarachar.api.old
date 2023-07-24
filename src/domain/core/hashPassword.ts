@@ -1,14 +1,16 @@
 import * as bcrypt from "bcrypt";
 
-export async function encryptPass(pass: string) {
-  const saltRounds = 10;
-  const encrypt = await bcrypt.hash(pass, saltRounds);
+export class HashPassword {
+  async encryptPass(pass: string) {
+    const saltRounds = 10;
+    const encrypt = await bcrypt.hash(pass, saltRounds);
 
-  return encrypt;
-}
+    return encrypt;
+  }
 
-export async function comparePass(pass: string, hash: string) {
-  const compare = await bcrypt.compare(pass, hash);
+  async comparePass(pass: string, hash: string) {
+    const compare = await bcrypt.compare(pass, hash);
 
-  return compare;
+    return compare;
+  }
 }
