@@ -20,6 +20,11 @@ describe("AuthController", () => {
     createdAt: 'any-date'
   }
 
+  interface IPayload {
+    email: string,
+    subject: string
+  }
+
   beforeEach(async () => {
 
     const mockPrisma = {
@@ -34,13 +39,18 @@ describe("AuthController", () => {
       });
     }
 
+    const mockJwtService = {
+      sign: jest.fn((payload: IPayload) => 'any-token')
+    }
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, JwtService, {provide: PrismaService, useValue: mockPrisma}, {provide: HashPassword, useClass: MockHashPassword}],
+      providers: [AuthService, {provide: JwtService, useValue: mockJwtService}, {provide: PrismaService, useValue: mockPrisma}, {provide: HashPassword, useClass: MockHashPassword}],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     prisma = module.get<PrismaService>(PrismaService);
     hashPassword = module.get<HashPassword>(HashPassword)
+    jwtService = module.get<JwtService>(JwtService)
   });
 
   afterEach(() => {
@@ -60,6 +70,13 @@ describe("AuthController", () => {
       )
 
       expect(service.validateUser(email, password)).rejects.toThrow()
+    });
+
+    it('should call prisma', async () => {
+
+      await service.validateUser(email, password)
+
+      expect(prisma.user.findUnique).toBeCalledTimes(1)
     });
 
     it('should pass the correct param to prisma', async () => {
@@ -95,6 +112,45 @@ describe("AuthController", () => {
   });
 
   describe('login()', () => {
-    
+
+    it('should throw if prisma throws', async () => {
+      (prisma.user.findUnique as jest.Mock).mockRejectedValue(
+        new InternalServerErrorException()
+      )
+
+      expect(service.login(email)).rejects.toThrow()
+    });
+
+    it('should call prisma', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+      await service.login(email)
+
+      expect(prisma.user.findUnique).toBeCalledTimes(1)
+    });
+
+    it('should call JwtService sign method with correct params', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+      await service.login(email)
+
+      expect(jwtService.sign).toBeCalledWith({
+        email: email,
+        subject: user.id
+      })
+      expect(jwtService.sign({
+        email: email,
+        subject: user.id
+      })).toEqual('any-token')
+    });
+
+    it('should return a token if a user is found', async () => {
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user);
+
+      await service.login(email)
+
+      expect(await service.login(email)).toEqual({
+        user: {email: user.email},
+        accessToken: 'any-token'
+      })
+    })
   })
 });
