@@ -5,6 +5,7 @@ import { PrismaModule } from "nestjs-prisma";
 import { PrismaService } from "../../src/domain/services/prisma.service";
 import { JwtModule } from "@nestjs/jwt";
 import { InternalServerErrorException } from "@nestjs/common";
+import { HashPassword } from "../../src/domain/core/hashPassword";
 
 describe("AuthController", () => {
   let controller: AuthController;
@@ -23,7 +24,7 @@ describe("AuthController", () => {
         }),
       ],
       controllers: [AuthController],
-      providers: [AuthService, PrismaService],
+      providers: [AuthService, PrismaService, HashPassword],
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
