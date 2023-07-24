@@ -1,14 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { CreateUserDto } from "../../src/domain/dto/create-user.dto";
 import * as process from "process";
-import { encryptPass } from "../../src/domain/core/hashPassword";
+import { HashPassword } from "../../src/domain/core/hashPassword";
 
 const prisma = new PrismaClient()
 
-async function main() {
+async function main(hashPassword: HashPassword) {
   const admin = new CreateUserDto();
 
-  const pass = await encryptPass("Borarachar@123");
+  const pass = await hashPassword.encryptPass("Borarachar@123");
 
   admin.email = "admin@borarachar.com.br";
   admin.password == pass;
@@ -17,8 +17,9 @@ async function main() {
 
   console.log(result)
 }
+// ver erro da linha abaixo com o luis
 
-main().then(async () => {
+main(new HashPassword).then(async () => {
   await prisma.$disconnect()
 })
   .catch(async (e) => {
