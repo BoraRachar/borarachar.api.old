@@ -2,14 +2,39 @@ import { AppModule } from "./infrastructure/modules/app.module";
 import { NestFactory } from "@nestjs/core";
 import type { SwaggerDocumentOptions } from "@nestjs/swagger";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { ValidationPipe } from "@nestjs/common";
+import { NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import "dotenv/config";
+import * as fs from "fs";
+import { ExpressAdapter } from "@nestjs/platform-express";
+import * as http from "http";
+import * as https from "https";
+import * as express from "express";
+import { Logger } from "./common/helper/logger";
+import { ConfigService } from "./domain/services/config.service";
 
+const NEST_LOGGING = false;
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const opts: NestApplicationOptions = {};
+  if (!NEST_LOGGING) {
+    opts.logger = false;
+  }
+  const privateKey = fs.readFileSync(
+    "./src/infrastructure/secrets/privatekey.pem",
+    "utf8",
+  );
+  const certificate = fs.readFileSync(
+    "./src/infrastructure/secrets/certificate.pem",
+    "utf8",
+  );
 
+  const httpsOptions = { key: privateKey, cert: certificate };
+
+  const server = express();
+
+  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
-    .setTitle(`Bora Rachar`)
+    .setTitle(`BoraRachar`)
     .setDescription(`API`)
     .setVersion(`v1`)
     .build();
@@ -21,9 +46,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup("api", app, document);
 
+  app.useLogger(app.get(Logger));
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(process.env.PORT || 3000);
+  await app.init();
+  http.createServer(server).listen(configService.get().port || 3000);
+  https
+    .createServer(httpsOptions, server)
+    .listen(configService.get().portssl || 3001);
 }
 bootstrap();

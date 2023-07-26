@@ -12,6 +12,7 @@ export class InstagramStrategy extends PassportStrategy(Strategy) {
       clientID: provider.clientID,
       clientSecret: provider.clientSecret,
       callbackURL: provider.callBackURL,
+      scope: provider.scope,
     });
   }
 

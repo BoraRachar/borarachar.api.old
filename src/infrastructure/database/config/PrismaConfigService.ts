@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaOptionsFactory, PrismaServiceOptions } from "nestjs-prisma";
-import { loggingMiddleware } from "src/application/middlewares/LoggingMiddleware";
 
 @Injectable()
 export class PrismaConfigService implements PrismaOptionsFactory {
@@ -13,7 +12,7 @@ export class PrismaConfigService implements PrismaOptionsFactory {
         log: ["info", "query"],
       },
       explicitConnect: true,
-      middlewares: [loggingMiddleware()],
+      middlewares: [],
     };
   }
 }
