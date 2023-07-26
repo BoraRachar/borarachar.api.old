@@ -11,6 +11,7 @@ import * as https from "https";
 import * as express from "express";
 import { Logger } from "./common/helper/logger";
 import { ConfigService } from "./domain/services/config.service";
+import { createDocument } from "./common/helper/swagger";
 
 const NEST_LOGGING = false;
 async function bootstrap() {
@@ -33,18 +34,8 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   const configService = app.get(ConfigService);
-  const config = new DocumentBuilder()
-    .setTitle(`BoraRachar`)
-    .setDescription(`API`)
-    .setVersion(`v1`)
-    .build();
 
-  const options: SwaggerDocumentOptions = {
-    deepScanRoutes: true,
-  };
-
-  const document = SwaggerModule.createDocument(app, config, options);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api", app, createDocument(app));
 
   app.useLogger(app.get(Logger));
   app.enableCors();

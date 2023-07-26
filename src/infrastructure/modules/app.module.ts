@@ -8,6 +8,7 @@ import { AuthGoogleModule } from "./authgoogle.module";
 import { AuthInstagramModule } from "./auth-instagram.module";
 import { LoggerModule } from "./logger.module";
 import { ConfigModule } from "./config.module";
+import { InstagramAuthModule } from "@nestjs-hybrid-auth/instagram";
 
 @Module({
   imports: [
@@ -16,6 +17,11 @@ import { ConfigModule } from "./config.module";
     PrismaModule.forRootAsync({
       isGlobal: true,
       useClass: PrismaConfigService,
+    }),
+    InstagramAuthModule.forRoot({
+      clientID: process.env.INSTAGRAM_ID,
+      clientSecret: process.env.INSTAGRAM_SECRET,
+      callbackURL: `https://${process.env.HOST}:${process.env.PORTSSL}/instagram/callback`,
     }),
     AuthGoogleModule,
     AuthInstagramModule,

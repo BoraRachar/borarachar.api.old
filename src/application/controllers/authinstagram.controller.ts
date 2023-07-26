@@ -1,4 +1,12 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -18,12 +26,12 @@ export class AuthInstagramController {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async instagram(@Req() request) {}
 
-  @Get("/instagram/callback")
+  @Post("/instagram/callback")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(InstagramOauthGuard)
-  async instagramAuthRedirect(@Req() request, @Res() response) {
-    return response.json(request.user);
+  async instagramAuthRedirect(@Query("code") code: string, @Res() response) {
+    return response.json(JSON.stringify(code));
   }
 }
