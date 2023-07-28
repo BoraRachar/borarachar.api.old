@@ -9,7 +9,7 @@ import { MetaProvider } from "../providers/meta.provider";
 
 @Module({
   imports: [PassportModule],
-  controllers: [AuthInstagramController, AuthFacebookController],
+  controllers: [],
   providers: [
     InstagramStrategy,
     InstagramProvider,
