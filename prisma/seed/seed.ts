@@ -17,7 +17,6 @@ async function main(hashPassword: HashPassword) {
 
   console.log(result)
 }
-// ver erro da linha abaixo com o luis
 
 main(new HashPassword).then(async () => {
   await prisma.$disconnect()
