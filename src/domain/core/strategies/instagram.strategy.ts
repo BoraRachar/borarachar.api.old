@@ -24,6 +24,6 @@ export class InstagramStrategy extends PassportStrategy(Strategy) {
     profile: any,
     done: any,
   ) {
-    return profile;
+    done(null, profile);
   }
 }

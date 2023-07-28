@@ -12,7 +12,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, "facebook") {
       clientSecret: provider.clientSecret,
       callbackURL: provider.callBackURL,
       scope: provider.scope,
-      profileFields: provider.profileFields,
     });
   }
 
@@ -22,18 +21,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, "facebook") {
     profile: Profile,
     done: (err: unknown, user: unknown, info?: unknown) => void,
   ): Promise<any> {
-    const { name, emails } = profile;
-    const user = {
-      email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
-    };
-
-    const payload = {
-      user,
-      accessToken,
-    };
-
-    done(null, payload);
+    done(null, profile);
   }
 }
