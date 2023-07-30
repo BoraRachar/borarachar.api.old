@@ -2,7 +2,11 @@ import { AppModule } from "./infrastructure/modules/app.module";
 import { NestFactory } from "@nestjs/core";
 import type { SwaggerDocumentOptions } from "@nestjs/swagger";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { NestApplicationOptions, ValidationPipe } from "@nestjs/common";
+import {
+  NestApplicationOptions,
+  RequestMethod,
+  ValidationPipe,
+} from "@nestjs/common";
 import "dotenv/config";
 import * as fs from "fs";
 import { ExpressAdapter } from "@nestjs/platform-express";
@@ -35,11 +39,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   const configService = app.get(ConfigService);
 
-  SwaggerModule.setup("api", app, createDocument(app));
+  SwaggerModule.setup("/v1/api", app, createDocument(app));
 
   app.useLogger(app.get(Logger));
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix("v1");
 
   await app.init();
   http.createServer(server).listen(configService.get().port || 3000);

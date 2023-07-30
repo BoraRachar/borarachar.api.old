@@ -3,4 +3,5 @@ export interface ConfigData {
   port: number;
   portssl: number;
   logLevel?: string;
+  JWT_SECRET?: string;
 }

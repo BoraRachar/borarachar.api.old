@@ -2,7 +2,7 @@ model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String?
-  socialId  String?
+  socialId  String?  @unique
   provider  String?
   nome      String?
   createdAt DateTime @default(now())

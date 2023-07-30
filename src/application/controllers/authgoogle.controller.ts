@@ -1,5 +1,4 @@
 import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -7,10 +6,13 @@ import {
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
 import { GoogleOauthGuard } from "../../domain/core/guards/google-oauth.guard";
+import { AuthGoogleService } from "../../domain/services/authgoogle.service";
 
 @ApiTags("GoogleLogin")
 @Controller("")
 export class AuthGoogleController {
+  constructor(private authGoogleService: AuthGoogleService) {}
+
   @Get("google")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
@@ -25,6 +27,8 @@ export class AuthGoogleController {
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() request, @Res() response) {
-    return response.json(request.user);
+    return response.json(
+      await this.authGoogleService.socialLogin(request.user),
+    );
   }
 }

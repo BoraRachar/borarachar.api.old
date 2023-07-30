@@ -1,18 +1,18 @@
 import { PrismaModule } from "nestjs-prisma";
 import { Module } from "@nestjs/common";
-import { DemoController } from "../../application/controllers/demo.controller";
-import { DemoService } from "../../domain/services/demo.service";
 import { AppService } from "../../domain/services/app.service";
 import { PrismaConfigService } from "../database/config/PrismaConfigService";
 import { AuthModule } from "./auth.module";
 import { AuthGoogleModule } from "./authgoogle.module";
 import { AuthInstagramModule } from "./auth-instagram.module";
 import { LoggerModule } from "./logger.module";
-import { ConfigModule } from "./config.module";
+import { ConfigModule } from "@nestjs/config";
+import config from "src/common/constants/configs/config";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     LoggerModule,
     PrismaModule.forRootAsync({
       isGlobal: true,
@@ -21,8 +21,9 @@ import { ConfigModule } from "./config.module";
     AuthModule,
     AuthGoogleModule,
     AuthInstagramModule,
+    JwtModule,
   ],
-  controllers: [DemoController],
-  providers: [AppService, DemoService],
+  controllers: [],
+  providers: [AppService],
 })
 export class AppModule {}

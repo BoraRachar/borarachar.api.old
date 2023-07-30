@@ -20,6 +20,7 @@ export class ConfigService {
       port: env.PORT ? parseInt(env.PORT, 10) : DEFAULT_CONFIG.port,
       portssl: env.PORTSSL ? parseInt(env.PORTSSL, 10) : DEFAULT_CONFIG.portssl,
       logLevel: env.LOG_LEVEL || DEFAULT_CONFIG.logLevel,
+      JWT_SECRET: env.JWT_SECRET || DEFAULT_CONFIG.JWT_SECRET,
     };
   }
 

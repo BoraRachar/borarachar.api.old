@@ -5,19 +5,19 @@ import * as winston from "winston";
 import { isLogLevel, LogLevel } from "../constants/loglevel.default";
 import { ConfigService } from "../../domain/services/config.service";
 
-const formatter = winston.format((info) => {
-  if (info.level === LogLevel.HTTP) {
-    return info;
+const formatter = winston.format((debug) => {
+  if (debug.level === LogLevel.HTTP) {
+    return debug;
   }
-  info.message = `[${moment().format("ddd MMM DD HH:mm:ss YYYY")}] [${
-    info.level
-  }] ${info.message}`;
-  return info;
+  debug.message = `[${moment().format("ddd MMM DD HH:mm:ss YYYY")}] [${
+    debug.level
+  }] ${debug.message}`;
+  return debug;
 });
 
-const passthrough = winston.format((info) => {
-  info[MESSAGE] = info.message;
-  return info;
+const passthrough = winston.format((debug) => {
+  debug[MESSAGE] = debug.message;
+  return debug;
 });
 
 @Injectable()

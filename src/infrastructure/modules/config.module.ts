@@ -14,6 +14,7 @@ const configFactory = {
 
 @Module({
   imports: [],
+
   controllers: [],
   providers: [configFactory],
   exports: [configFactory],
