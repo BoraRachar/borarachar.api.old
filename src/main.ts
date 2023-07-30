@@ -47,9 +47,9 @@ async function bootstrap() {
   app.setGlobalPrefix("v1");
 
   await app.init();
-  http.createServer(server).listen(configService.get().port || 3000);
+  http.createServer(server).listen(configService.get().port || 3000, "0.0.0.0");
   https
     .createServer(httpsOptions, server)
-    .listen(configService.get().portssl || 3001);
+    .listen(configService.get().portssl || 3001, "0.0.0.0");
 }
 bootstrap();
