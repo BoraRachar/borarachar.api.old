@@ -4,21 +4,13 @@ import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from '../../src/domain/services/prisma.service';
 import { InternalServerErrorException } from '@nestjs/common';
 import { HashPassword } from "../../src/domain/core/hashPassword";
+import { userMock } from "./mocks/users.mock";
 
 describe("AuthController", () => {
   let service: AuthService;
   let jwtService: JwtService;
   let prisma: PrismaService;
   let hashPassword: HashPassword
-
-  const email = 'any-email';
-  const password = 'any-password'
-  const user = {
-    id: 'any-id',
-    email: 'any-email',
-    password: 'any-password',
-    createdAt: 'any-date'
-  }
 
   interface IPayload {
     email: string,
@@ -69,44 +61,44 @@ describe("AuthController", () => {
         new InternalServerErrorException()
       )
 
-      expect(service.validateUser(email, password)).rejects.toThrow()
+      expect(service.validateUser(userMock.email, userMock.password)).rejects.toThrow()
     });
 
     it('should call prisma', async () => {
 
-      await service.validateUser(email, password)
+      await service.validateUser(userMock.email, userMock.password)
 
       expect(prisma.user.findUnique).toBeCalledTimes(1)
     });
 
     it('should pass the correct param to prisma', async () => {
 
-      await service.validateUser(email, password)
+      await service.validateUser(userMock.email, userMock.password)
 
       expect(prisma.user.findUnique).toBeCalledWith({
-        where: { email }
+        where: { email: userMock.email }
       })
     });
 
     it('should call comparePass if prisma returns a user', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
-      await service.validateUser(email, password)
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser)
+      await service.validateUser(userMock.email, userMock.password)
 
       expect(hashPassword.comparePass).toBeCalledTimes(1)
     });
 
     it('should call comparePass with the correct params', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
-      await service.validateUser(email, password)
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser)
+      await service.validateUser(userMock.email, userMock.password)
 
-      expect(hashPassword.comparePass).toBeCalledWith(password, user.password)
+      expect(hashPassword.comparePass).toBeCalledWith(userMock.password, userMock.returnedUser.password)
     });
 
     it('should return user email if passwords match', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser)
 
-      expect(await service.validateUser(email, password)).toEqual({
-        email: user.email
+      expect(await service.validateUser(userMock.email, userMock.password)).toEqual({
+        email: userMock.returnedUser.email
       })
     });
   });
@@ -118,37 +110,37 @@ describe("AuthController", () => {
         new InternalServerErrorException()
       )
 
-      expect(service.login(email)).rejects.toThrow()
+      expect(service.login(userMock.email)).rejects.toThrow()
     });
 
     it('should call prisma', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
-      await service.login(email)
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser)
+      await service.login(userMock.email)
 
       expect(prisma.user.findUnique).toBeCalledTimes(1)
     });
 
     it('should call JwtService sign method with correct params', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user)
-      await service.login(email)
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser)
+      await service.login(userMock.email)
 
       expect(jwtService.sign).toBeCalledWith({
-        email: email,
-        subject: user.id
+        email: userMock.email,
+        subject: userMock.returnedUser.id
       })
       expect(jwtService.sign({
-        email: email,
-        subject: user.id
+        email: userMock.email,
+        subject: userMock.returnedUser.id
       })).toEqual('any-token')
     });
 
     it('should return a token if a user is found', async () => {
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue(user);
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(userMock.returnedUser);
 
-      await service.login(email)
+      await service.login(userMock.email)
 
-      expect(await service.login(email)).toEqual({
-        user: {email: user.email},
+      expect(await service.login(userMock.email)).toEqual({
+        user: {email: userMock.returnedUser.email},
         accessToken: 'any-token'
       })
     })
