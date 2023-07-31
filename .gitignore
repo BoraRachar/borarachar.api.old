@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/coverage
 
 # Logs
 logs
@@ -36,10 +37,6 @@ lerna-debug.log*
 
 # lock
 yarn.lock
-package-lock.json
 
 # env
 .env
-./src/common/env/.env.development
-./src/common/env/.env.production
-./src/common/env/.env.testing

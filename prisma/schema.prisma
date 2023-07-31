@@ -11,7 +11,10 @@ generator client {
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
-  password  String
+  password  String?
+  socialId  String?  @unique
+  provider  String?
+  nome      String?
   createdAt DateTime @default(now())
 
   @@map("users")

@@ -8,14 +8,10 @@ const prisma = new PrismaClient()
 async function main() {
   const admin = new CreateUserDto();
 
-  const pass = await encryptPass("Borarachar@123");
-
   admin.email = "admin@borarachar.com.br";
-  admin.password == pass;
+  admin.password = await encryptPass("Borarachar@123");
 
   let result = await  prisma.user.create({data : admin});
-
-  console.log(result)
 }
 
 main().then(async () => {

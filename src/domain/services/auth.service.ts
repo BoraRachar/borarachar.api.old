@@ -21,17 +21,22 @@ export class AuthService {
     return null;
   }
 
+  async generateToken(email: string, id: string) {
+    const payload = { sub: email, subject: id };
+    const token = await this.jwtService.signAsync(payload);
+    return token;
+  }
+
   async login(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
 
+    const token = await this.generateToken(email, user.id);
+
     return {
       user: { email },
-      accessToken: this.jwtService.sign({
-        email: email,
-        subject: user.id,
-      }),
+      accessToken: token,
     };
   }
 }
