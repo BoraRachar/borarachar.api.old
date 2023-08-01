@@ -21,13 +21,15 @@ export class AuthGoogleService {
   }
 
   async newUser(data: SocialUser): Promise<User | null> {
-    return await this.userService.userCreate({
+    const add = await this.userService.userCreate({
       id: uuidv4(),
       email: data.email,
       socialId: data.socialId,
       nome: data.nome,
       provider: data.provider,
+      createdAt: Date.now().toString(),
     });
+    return add;
   }
 
   async generateToken(email: string, id: string): Promise<Token> {
@@ -69,6 +71,7 @@ export class AuthGoogleService {
       }
     } else {
       const newUser = await this.newUser(user);
+      console.log(newUser);
 
       const token = await this.generateToken(newUser.email, newUser.socialId);
       const res: Login = {

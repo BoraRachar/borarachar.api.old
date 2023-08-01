@@ -23,23 +23,13 @@ async function bootstrap() {
   if (!NEST_LOGGING) {
     opts.logger = false;
   }
-  const privateKey = fs.readFileSync(
-    "./src/infrastructure/secrets/privatekey.pem",
-    "utf8",
-  );
-  const certificate = fs.readFileSync(
-    "./src/infrastructure/secrets/certificate.pem",
-    "utf8",
-  );
-
-  const httpsOptions = { key: privateKey, cert: certificate };
 
   const server = express();
 
   const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
   const configService = app.get(ConfigService);
 
-  SwaggerModule.setup("/v1/api", app, createDocument(app));
+  SwaggerModule.setup("/v1", app, createDocument(app));
 
   app.useLogger(app.get(Logger));
   app.enableCors();
@@ -48,8 +38,5 @@ async function bootstrap() {
 
   await app.init();
   http.createServer(server).listen(configService.get().port || 3000, "0.0.0.0");
-  https
-    .createServer(httpsOptions, server)
-    .listen(configService.get().portssl || 3001, "0.0.0.0");
 }
 bootstrap();

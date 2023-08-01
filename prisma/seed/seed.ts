@@ -11,7 +11,12 @@ async function main() {
   admin.email = "admin@borarachar.com.br";
   admin.password = await encryptPass("Borarachar@123");
 
-  let result = await  prisma.user.create({data : admin});
+  let user = await prisma.user.findUnique({
+    where: { email: admin.email }
+  })
+  if (user == null) {
+    let result = await  prisma.user.create({data : admin});
+  }
 }
 
 main().then(async () => {
