@@ -11,7 +11,7 @@ export function createDocument(app: INestApplication): OpenAPIObject {
       "access-token",
     )
     .setVersion(SWAGGER_CONFIG.version);
-  const options = builder.build();
+  const options = builder.addServer("v1").build();
 
   return SwaggerModule.createDocument(app, options);
 }

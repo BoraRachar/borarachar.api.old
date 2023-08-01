@@ -1,6 +1,6 @@
 import { AppModule } from "./infrastructure/modules/app.module";
 import { NestFactory } from "@nestjs/core";
-import { SwaggerModule } from "@nestjs/swagger";
+import { SwaggerDocumentOptions, SwaggerModule } from "@nestjs/swagger";
 import { NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import "dotenv/config";
 import { ExpressAdapter } from "@nestjs/platform-express";

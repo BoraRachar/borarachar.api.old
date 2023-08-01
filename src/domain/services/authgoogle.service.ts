@@ -21,15 +21,18 @@ export class AuthGoogleService {
   }
 
   async newUser(data: SocialUser): Promise<User | null> {
-    const add = await this.userService.userCreate({
+    const add = {
       id: uuidv4(),
       email: data.email,
       socialId: data.socialId,
       nome: data.nome,
       provider: data.provider,
       createdAt: Date.now().toString(),
-    });
-    return add;
+    };
+    const test = await this.userService.userCreate(add);
+
+    console.log(test);
+    return test;
   }
 
   async generateToken(email: string, id: string): Promise<Token> {
@@ -53,7 +56,6 @@ export class AuthGoogleService {
   async socialLogin(user: SocialUser): Promise<Login> {
     if (user != null) {
       const find = await this.getUser(user.socialId);
-
       if (find != null) {
         const token = await this.generateToken(find.email, find.socialId);
         console.log("Token: ", token);
@@ -67,11 +69,13 @@ export class AuthGoogleService {
           token: token,
         };
 
+        console.log(res);
+
         return res;
       }
     } else {
+      console.log("new");
       const newUser = await this.newUser(user);
-      console.log(newUser);
 
       const token = await this.generateToken(newUser.email, newUser.socialId);
       const res: Login = {
@@ -82,7 +86,7 @@ export class AuthGoogleService {
         },
         token: token,
       };
-
+      console.log(res);
       return res;
     }
   }

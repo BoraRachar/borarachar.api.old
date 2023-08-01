@@ -21,14 +21,12 @@ export class AuthGoogleController {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async callback(@Req() request) {}
 
-  @Get("/google/callback")
+  @Get("google/callback")
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() request, @Res() response) {
-    return response.json(
-      await this.authGoogleService.socialLogin(request.user),
-    );
+    return await this.authGoogleService.socialLogin(request.user);
   }
 }
