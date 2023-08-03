@@ -21,6 +21,7 @@
     "prisma:migrate:prod": "prisma migrate deploy",
     "prisma:seed:dev": "prisma db seed",
     "prisma:seed:prod": "node dist/prisma/seed/seed.js",
+    "prisma:push": "npm run prismix && prisma db push",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
