@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpCode, Req, Res, UseGuards } from "@nestjs/common";
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -7,6 +7,7 @@ import {
 } from "@nestjs/swagger";
 import { GoogleOauthGuard } from "../../domain/core/guards/google-oauth.guard";
 import { AuthGoogleService } from "../../domain/services/authgoogle.service";
+import * as console from "console";
 
 @ApiTags("GoogleLogin")
 @Controller("")
@@ -21,14 +22,15 @@ export class AuthGoogleController {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   async callback(@Req() request) {}
 
-  @Get("/google/callback")
+  @Get("google/callback")
+  @HttpCode(200)
   @ApiCreatedResponse({ description: "Succesfully" })
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(GoogleOauthGuard)
-  async googleAuthRedirect(@Req() request, @Res() response) {
-    return response.json(
-      await this.authGoogleService.socialLogin(request.user),
-    );
+  async googleAuthRedirect(@Req() request) {
+    const user = await this.authGoogleService.socialLogin(request.user);
+
+    return user;
   }
 }

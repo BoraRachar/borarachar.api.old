@@ -17,17 +17,19 @@ export class AuthGoogleService {
   ) {}
 
   async getUser(socialId: string): Promise<User | null> {
-    return await this.userService.findOneUserbySocialId(socialId);
+    const user = await this.userService.findOneUserbySocialId(socialId);
+    return user;
   }
 
   async newUser(data: SocialUser): Promise<User | null> {
-    return await this.userService.userCreate({
+    const add = await this.userService.userCreate({
       id: uuidv4(),
       email: data.email,
       socialId: data.socialId,
       nome: data.nome,
       provider: data.provider,
     });
+    return add;
   }
 
   async generateToken(email: string, id: string): Promise<Token> {
@@ -49,29 +51,25 @@ export class AuthGoogleService {
   }
 
   async socialLogin(user: SocialUser): Promise<Login> {
-    if (user != null) {
-      const find = await this.getUser(user.socialId);
+    const find = await this.getUser(user.socialId);
 
-      if (find != null) {
-        const token = await this.generateToken(find.email, find.socialId);
-        console.log("Token: ", token);
+    let userLogin: Login = null;
 
-        const res: Login = {
-          user: {
-            nome: find.nome,
-            email: find.email,
-            provider: find.provider,
-          },
-          token: token,
-        };
-
-        return res;
-      }
+    if (find != null) {
+      const token = await this.generateToken(find.email, find.socialId);
+      userLogin = {
+        user: {
+          nome: find.nome,
+          email: find.email,
+          provider: find.provider,
+        },
+        token: token,
+      };
     } else {
       const newUser = await this.newUser(user);
 
       const token = await this.generateToken(newUser.email, newUser.socialId);
-      const res: Login = {
+      userLogin = {
         user: {
           nome: newUser.nome,
           email: newUser.email,
@@ -79,8 +77,7 @@ export class AuthGoogleService {
         },
         token: token,
       };
-
-      return res;
     }
+    return userLogin;
   }
 }

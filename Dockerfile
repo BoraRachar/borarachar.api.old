@@ -1,28 +1,47 @@
-FROM node:18.4-alpine as builder
+#######################
+# Development stage
+#######################
+
+FROM node:current-alpine3.18 as development
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package.json yarn.lock ./
+COPY prisma ./prisma
 
-RUN npm install
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
-RUN npm run build
+#######################
+# Production builder stage
+#######################
 
-FROM node:lts-slim as production
+FROM development as build
 
-ENV NODE_ENV production
-USER node
+RUN yarn build
+
+#######################
+# Production stage
+#######################
+
+FROM node:current-alpine3.18 as production
+
+ENV NODE_ENV=production
+
+RUN npm install --global dotenv
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
+COPY package.json yarn.lock ./
+COPY prisma ./prisma
 
-RUN npm install --omit=dev
+RUN yarn install --frozen-lockfile --production=true
+RUN yarn cache clean
 
-COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/dist ./dist
+COPY ./src/infrastructure/secrets ./dist/src/infrastructure/secrets
 
 EXPOSE 3000
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "yarn", "start:migrate:prod" ]

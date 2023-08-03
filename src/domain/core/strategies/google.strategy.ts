@@ -30,7 +30,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       socialId: id,
       provider: provider,
     };
-
     done(null, socialUser);
   }
 }
