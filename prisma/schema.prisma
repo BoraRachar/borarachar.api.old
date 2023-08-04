@@ -19,18 +19,19 @@ model Key {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  keys      Key[]     @relation(name: "KeyToUser")
-  tokens    Token[]   @relation(name: "TokenToUser")
-  email     String    @unique
-  password  String?
-  socialId  String?   @unique
-  provider  String?
-  nome      String?
-  sobreNome String?
-  termos    Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
+  id           String    @id @default(uuid())
+  keys         Key[]     @relation(name: "KeyToUser")
+  tokens       Token[]   @relation(name: "TokenToUser")
+  email        String    @unique
+  password     String?
+  socialId     String?   @unique
+  provider     String?
+  nome         String
+  sobreNome    String
+  termos       Boolean   @default(false)
+  validateUser Boolean?  @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime?
 
   @@map("users")
 }
@@ -41,6 +42,7 @@ model Token {
   userId       String
   token        String
   refreshToken String
+  expiresIn    Int
   validate     DateTime
 
   @@map("tokens")

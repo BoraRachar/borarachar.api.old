@@ -1,14 +1,15 @@
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String?
-  socialId  String?   @unique
-  provider  String?
-  nome      String?
-  sobreNome String?
-  termos    Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
+  id           String    @id @default(uuid())
+  email        String    @unique
+  password     String?
+  socialId     String?   @unique
+  provider     String?
+  nome         String
+  sobreNome    String
+  termos       Boolean   @default(false)
+  validateUser Boolean?  @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime?
 
   @@map("users")
 }

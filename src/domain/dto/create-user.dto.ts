@@ -25,4 +25,7 @@ export class CreateUserDto {
   @MinLength(8)
   @IsNotEmpty({ message: "Não pode ser vazio" })
   password: string;
+  nome: string;
+  sobreNome: string;
+  termos: boolean;
 }
