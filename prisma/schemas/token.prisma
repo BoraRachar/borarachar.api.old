@@ -1,0 +1,15 @@
+model Token {
+  id           Int      @id @default(autoincrement())
+  User         User     @relation(fields: [userId], references: [id])
+  userId       String
+  token        String
+  refreshToken String
+  validate     DateTime
+
+  @@map("tokens")
+}
+
+model User {
+  id     String  @id
+  tokens Token[]
+}

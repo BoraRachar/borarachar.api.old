@@ -3,7 +3,7 @@
     {
       "input": [
         "./prisma/schemas/base.prisma",
-        "./prisma/schemas/user.prisma"
+        "./prisma/schemas/*.prisma"
       ],
       "output": "prisma/schema.prisma"
     }
