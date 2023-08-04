@@ -6,10 +6,13 @@ export interface Login {
 export interface UserLogin {
   email: string;
   nome: string;
+  sobreNome: string;
   provider?: string;
+  validateUser: boolean;
 }
 
 export interface Token {
   accessToken: string;
   refreshToken: string;
+  expiresIn: string;
 }
