@@ -33,10 +33,7 @@ export class UserService {
 
     const key = await this.keyService.createKeyConfirmEmail(user);
 
-    const sendEmail = await this.emailService.sendEmailBoasVindas(
-      user,
-      key.value,
-    );
+    await this.emailService.sendEmailBoasVindas(user, key.value);
 
     return user;
   }

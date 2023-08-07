@@ -3,11 +3,10 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
-  },
-  "assets": [
-    "common/env/*",
-    "common/templates/**/*.ejs"
-  ],
-  "watchAssets": true
+    "deleteOutDir": true,
+    "assets": [
+      "./templates/**/*"
+    ],
+    "watchAssets": true
+  }
 }

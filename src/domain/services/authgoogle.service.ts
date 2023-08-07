@@ -62,7 +62,6 @@ export class AuthGoogleService {
     let userLogin: Login = null;
 
     if (find != null) {
-      console.log("Find");
       const token = await this.generateToken(find.email, find.socialId);
       userLogin = {
         user: {
@@ -76,7 +75,6 @@ export class AuthGoogleService {
         token: token,
       };
     } else {
-      console.log("New");
       const newUser = await this.newUser(user);
 
       const token = await this.generateToken(newUser.email, newUser.socialId);
