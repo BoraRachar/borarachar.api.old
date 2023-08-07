@@ -27,7 +27,9 @@ export class AuthGoogleService {
       email: data.email,
       socialId: data.socialId,
       nome: data.nome,
+      sobreNome: data.sobreNome,
       provider: data.provider,
+      termos: data.termos,
     });
     return add;
   }
@@ -45,6 +47,7 @@ export class AuthGoogleService {
     const token: Token = {
       accessToken,
       refreshToken,
+      expiresIn: "1day",
     };
 
     return token;
@@ -60,8 +63,11 @@ export class AuthGoogleService {
       userLogin = {
         user: {
           nome: find.nome,
+          sobreNome: find.sobreNome,
           email: find.email,
           provider: find.provider,
+          termos: find.termos,
+          validateUser: find.validateUser,
         },
         token: token,
       };
@@ -72,8 +78,11 @@ export class AuthGoogleService {
       userLogin = {
         user: {
           nome: newUser.nome,
+          sobreNome: newUser.sobreNome,
           email: newUser.email,
           provider: newUser.provider,
+          validateUser: false,
+          termos: false,
         },
         token: token,
       };

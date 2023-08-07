@@ -6,6 +6,8 @@
     "deleteOutDir": true
   },
   "assets": [
-    "common/env/*"
-  ]
+    "common/env/*",
+    "common/templates/**/*.ejs"
+  ],
+  "watchAssets": true
 }

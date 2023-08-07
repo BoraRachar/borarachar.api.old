@@ -1,11 +1,11 @@
 import { AppModule } from "./infrastructure/modules/app.module";
 import { NestFactory } from "@nestjs/core";
-import { SwaggerDocumentOptions, SwaggerModule } from "@nestjs/swagger";
+import { SwaggerModule } from "@nestjs/swagger";
 import { NestApplicationOptions, ValidationPipe } from "@nestjs/common";
 import "dotenv/config";
 import { ExpressAdapter } from "@nestjs/platform-express";
 import * as http from "http";
-import * as express from "express";
+import express from "express";
 import { Logger } from "./common/helper/logger";
 import { ConfigService } from "./domain/services/config.service";
 import { createDocument } from "./common/helper/swagger";
