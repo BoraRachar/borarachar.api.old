@@ -1,4 +1,13 @@
-import { Controller, Get, HttpCode, Req, Res, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 import {
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -7,7 +16,7 @@ import {
 } from "@nestjs/swagger";
 import { GoogleOauthGuard } from "../../domain/core/guards/google-oauth.guard";
 import { AuthGoogleService } from "../../domain/services/authgoogle.service";
-import * as console from "console";
+import { Response } from "express";
 
 @ApiTags("GoogleLogin")
 @Controller("")
@@ -28,9 +37,18 @@ export class AuthGoogleController {
   @ApiUnprocessableEntityResponse({ description: "Bad Request" })
   @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @UseGuards(GoogleOauthGuard)
-  async googleAuthRedirect(@Req() request) {
-    const user = await this.authGoogleService.socialLogin(request.user);
+  async googleAuthRedirect(@Req() request, @Res() response: Response) {
+    try {
+      const user = await this.authGoogleService.socialLogin(request.user);
 
-    return user;
+      response.status(200).json(user);
+    } catch (error) {
+      if (error) {
+        throw new HttpException(
+          "Hove um erro! ",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    }
   }
 }

@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { Key } from "../entities/interfaces/key.interface";
 import { PrismaService } from "./prisma.service";
+import { STATUS_CODES } from "http";
 
 @Injectable()
 export class KeyService {
@@ -21,5 +22,52 @@ export class KeyService {
 
     const key = await this.prisma.key.create({ data });
     return key;
+  }
+
+  async confirmEmailCadastro(key: string) {
+    const existKey = await this.prisma.key.findUnique({
+      where: { value: key, status: true },
+    });
+
+    if (existKey == null) {
+      throw new HttpException("Chave invalida", HttpStatus.NOT_FOUND);
+    }
+
+    const now = new Date();
+
+    const validDate = compareDates(existKey.validate, now);
+
+    if (validDate == -1 || validDate == 0) {
+      const updateKey = await this.prisma.key.update({
+        where: {
+          id: existKey.id,
+        },
+        data: {
+          status: false,
+        },
+      });
+
+      const updateUser = await this.prisma.user.update({
+        where: {
+          id: existKey.userId,
+        },
+
+        data: {
+          validateUser: true,
+        },
+      });
+
+      return true;
+    } else {
+      const updateKey = await this.prisma.key.update({
+        where: {
+          id: existKey.id,
+        },
+        data: {
+          status: false,
+        },
+      });
+      throw new HttpException("Chave expirada", HttpStatus.BAD_REQUEST);
+    }
   }
 }

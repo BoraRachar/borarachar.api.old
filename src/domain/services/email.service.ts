@@ -9,14 +9,18 @@ export class EmailService {
   async sendEmailBoasVindas(user: User, key: string) {
     const confirmUrl = `${process.env.HOST}/v1/confirmEmail?key=${key}`;
 
-    await this.mailService.sendMail({
-      to: user.email,
-      subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
-      template: "../../common/templates/bemvindo",
-      context: {
-        nome: `${user.nome} ${user.sobreNome}`,
-        confirmUrl,
-      },
-    });
+    const sendEmail = await this.mailService
+      .sendMail({
+        to: user.email,
+        subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
+        template: "../../common/templates/bemvindo",
+        context: {
+          nome: `${user.nome} ${user.sobreNome}`,
+          confirmUrl,
+        },
+      })
+      .catch((e) => console.log(e));
+
+    console.log(JSON.stringify(sendEmail));
   }
 }

@@ -17,9 +17,7 @@ async function bootstrap() {
     opts.logger = false;
   }
 
-  const server = express();
-
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+  const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
 
   SwaggerModule.setup("/v1", app, createDocument(app));
@@ -29,7 +27,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix("v1");
 
-  await app.init();
-  http.createServer(server).listen(configService.get().port || 3000, "0.0.0.0");
+  await app.listen(configService.get().port || 3000, "0.0.0.0");
 }
 bootstrap();

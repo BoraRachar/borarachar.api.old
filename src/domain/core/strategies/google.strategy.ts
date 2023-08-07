@@ -32,6 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
       provider: provider,
       termos: false,
     };
+    console.log("User Social: ", socialUser);
     done(null, socialUser);
   }
 }

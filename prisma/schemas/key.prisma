@@ -5,6 +5,7 @@ model Key {
   value     String   @unique
   validate  DateTime
   expiresIn Int
+  status    Boolean  @default(true)
 
   @@map("keys")
 }

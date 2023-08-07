@@ -6,13 +6,16 @@ import { Login, Token } from "../entities/interfaces/login.interface";
 import { JwtService } from "@nestjs/jwt";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { config } from "process";
+import { EmailService } from "./email.service";
+import { KeyService } from "./key.service";
 
 @Injectable()
 export class AuthGoogleService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private emailService: EmailService,
+    private keyService: KeyService,
     private configService: ConfigService,
   ) {}
 
@@ -59,6 +62,7 @@ export class AuthGoogleService {
     let userLogin: Login = null;
 
     if (find != null) {
+      console.log("Find");
       const token = await this.generateToken(find.email, find.socialId);
       userLogin = {
         user: {
@@ -72,6 +76,7 @@ export class AuthGoogleService {
         token: token,
       };
     } else {
+      console.log("New");
       const newUser = await this.newUser(user);
 
       const token = await this.generateToken(newUser.email, newUser.socialId);
@@ -87,6 +92,7 @@ export class AuthGoogleService {
         token: token,
       };
     }
+
     return userLogin;
   }
 }
