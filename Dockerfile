@@ -36,11 +36,11 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 COPY prisma ./prisma
 
+
 RUN yarn install --frozen-lockfile --production=true
 RUN yarn cache clean
 
 COPY --from=build /usr/src/app/dist ./dist
-COPY ./src/infrastructure/secrets ./dist/src/infrastructure/secrets
 
 EXPOSE 3000
 
