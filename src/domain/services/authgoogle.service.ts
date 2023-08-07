@@ -25,7 +25,7 @@ export class AuthGoogleService {
   }
 
   async newUser(data: SocialUser): Promise<User | null> {
-    const add = await this.userService.userCreate({
+    const add = await this.userService.socialUserCreate({
       id: uuidv4(),
       email: data.email,
       socialId: data.socialId,

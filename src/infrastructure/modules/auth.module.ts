@@ -9,6 +9,9 @@ import { PrismaService } from "../../domain/services/prisma.service";
 import "dotenv/config";
 import { ConfigService } from "@nestjs/config";
 import { SecurityConfig } from "src/common/constants/configs/config.interface";
+import { UserController } from "src/application/controllers/user.controller";
+import { UserService } from "src/domain/services/user.service";
+import { KeyService } from "src/domain/services/key.service";
 
 @Module({
   imports: [
@@ -27,8 +30,14 @@ import { SecurityConfig } from "src/common/constants/configs/config.interface";
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, PrismaService],
+  controllers: [AuthController, UserController],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    PrismaService,
+    UserService,
+    KeyService,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}
