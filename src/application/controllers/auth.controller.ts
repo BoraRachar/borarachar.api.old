@@ -26,7 +26,7 @@ export class AuthController {
     try {
       const login = await this.authService.login(loginInfo.email);
 
-      response.status(200).json(login);
+      response.status(HttpStatus.OK).json(login);
     } catch (error) {
       if (error) {
         throw new HttpException(

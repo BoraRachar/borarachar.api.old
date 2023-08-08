@@ -8,7 +8,7 @@ export class EmailService {
   constructor(private mailService: MailerService) {}
 
   async sendEmailBoasVindas(user: User, key: string) {
-    const confirmUrl = `${process.env.HOST}/v1/confirmEmail?key=${key}`;
+    const confirmUrl = `${process.env.HOST}/v1/user/confirmEmail/${key}`;
 
     await this.mailService.sendMail({
       to: user.email,

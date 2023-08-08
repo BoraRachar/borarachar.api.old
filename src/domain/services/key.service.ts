@@ -38,7 +38,7 @@ export class KeyService {
     const validDate = compareDates(existKey.validate, now);
 
     if (validDate == -1 || validDate == 0) {
-      const updateKey = await this.prisma.key.update({
+      await this.prisma.key.update({
         where: {
           id: existKey.id,
         },
@@ -47,11 +47,10 @@ export class KeyService {
         },
       });
 
-      const updateUser = await this.prisma.user.update({
+      await this.prisma.user.update({
         where: {
           id: existKey.userId,
         },
-
         data: {
           validateUser: true,
         },
@@ -59,7 +58,7 @@ export class KeyService {
 
       return true;
     } else {
-      const updateKey = await this.prisma.key.update({
+      await this.prisma.key.update({
         where: {
           id: existKey.id,
         },
