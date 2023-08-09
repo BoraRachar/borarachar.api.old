@@ -41,11 +41,18 @@ export class AuthGoogleService {
     const payload = { sub: email, subject: id };
     const config = {
       secret: this.configService.get<string>("JWT_SECRET"),
-      expiresIn: "2hours",
+      expiresIn: "1day",
+    };
+    const configRefresh = {
+      secret: this.configService.get<string>("JWT_REFRESH_SECRET"),
+      expiresIn: "7days",
     };
 
     const accessToken = await this.jwtService.signAsync(payload, config);
-    const refreshToken = await this.jwtService.signAsync(payload, config);
+    const refreshToken = await this.jwtService.signAsync(
+      payload,
+      configRefresh,
+    );
 
     const token: Token = {
       accessToken,
