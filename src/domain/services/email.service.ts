@@ -10,12 +10,15 @@ export class EmailService {
   async sendEmailBoasVindas(user: User, key: string) {
     const confirmUrl = `${process.env.HOST}/v1/user/confirmEmail/${key}`;
 
+    const nome =
+      user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
+
     const sendEmail = await this.mailService.sendMail({
       to: user.email,
       subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
       template: join(__dirname, "../../common/templates", "bemvindo"),
       context: {
-        nome: `${user.nome} ${user.sobreNome}`,
+        nome,
         confirmUrl,
       },
     });
