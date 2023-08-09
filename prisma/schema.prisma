@@ -28,9 +28,9 @@ model User {
   password     String?
   socialId     String?   @unique
   provider     String?
-  nome         String
-  sobreNome    String
-  termos       Boolean   @default(false)
+  nome         String?
+  sobreNome    String?
+  termos       Boolean?  @default(false)
   validateUser Boolean?  @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime?

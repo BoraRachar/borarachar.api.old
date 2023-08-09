@@ -25,39 +25,35 @@ export class UserController {
 
   @Post()
   async createUser(@Body() userInfo: CreateUserDto, @Res() response: Response) {
-    try {
-      const user = await this.userService.createUser(userInfo);
+    //try {
+    const user = await this.userService.createUser(userInfo);
 
-      return response.status(HttpStatus.CREATED).json(user);
-    } catch (error) {
-      if (error) {
-        throw new HttpException(
-          "Hove um erro! ",
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    return response.status(HttpStatus.CREATED).json(user);
+    //catch (error) {
+    // if (error) {
+    //   console.log(error);
+    //   throw new HttpException(
+    //     "Hove um erro! ",
+    //    HttpStatus.INTERNAL_SERVER_ERROR,
+    //  );
+    // }
   }
+  //}
 
   @Get("confirmEmail/:key")
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
-    try {
-      const valid = await this.keyService.confirmEmailCadastro(key);
+    const valid = await this.keyService.confirmEmailCadastro(key);
 
-      if (valid) {
-        return response
-          .status(HttpStatus.CREATED)
-          .redirect("www.borarachar.online");
-      } else {
-        return response.redirect("www.borarachar.online");
-      }
-    } catch (error) {
-      if (error) {
-        throw new HttpException(
-          "Hove um erro! ",
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+    if (valid) {
+      return response
+        .status(HttpStatus.CREATED)
+        .redirect("www.borarachar.online/register/complete/{token}");
+    } else {
+      return response.redirect("www.borarachar.online");
     }
   }
+
+  //token -> userId(uuid) "$" +  secret
+  // getUser -> token(UserId)
+  // putUser -> nome, sobrenome, termos, cpf -> (return login)
 }

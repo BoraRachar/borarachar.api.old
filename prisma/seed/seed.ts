@@ -2,11 +2,12 @@ import { PrismaClient } from "@prisma/client";
 import { CreateUserDto } from "../../src/domain/dto/create-user.dto";
 import * as process from "process";
 import { encryptPass } from "../../src/domain/core/hashPassword";
+import { UserDto } from "src/domain/dto/user.dto";
 
 const prisma = new PrismaClient()
 
 async function main() {
-  const admin = new CreateUserDto();
+  const admin = new UserDto();
 
   admin.email = "admin@borarachar.com.br";
   admin.password = await encryptPass("Borarachar@123");

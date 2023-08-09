@@ -13,7 +13,7 @@ export class EmailService {
     await this.mailService.sendMail({
       to: user.email,
       subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
-      template: join(__dirname, "../../templates", "bemvindo"),
+      template: join(__dirname, "../../common/templates", "bemvindo"),
       context: {
         nome: `${user.nome} ${user.sobreNome}`,
         confirmUrl,
