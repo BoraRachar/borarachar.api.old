@@ -9,6 +9,7 @@ export interface UserLogin {
   sobreNome: string;
   provider?: string;
   validateUser: boolean;
+  termos: boolean;
 }
 
 export interface Token {

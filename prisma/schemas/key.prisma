@@ -1,14 +1,16 @@
 model Key {
-  id           Int      @id @default(autoincrement())
-  User         User     @relation(fields: [userId], references: [id])
-  userId       String
-  value        String   @unique
-  validate     DateTime
+  id        Int      @id @default(autoincrement())
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
+  value     String   @unique
+  validate  DateTime
+  expiresIn Int
+  status    Boolean  @default(true)
 
   @@map("keys")
 }
 
 model User {
-  id     String  @id
-  keys   Key[]
+  id   String @id
+  keys Key[]
 }
