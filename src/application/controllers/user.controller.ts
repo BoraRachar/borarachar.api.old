@@ -25,29 +25,22 @@ export class UserController {
 
   @Post()
   async createUser(@Body() userInfo: CreateUserDto, @Res() response: Response) {
-    //try {
     const user = await this.userService.createUser(userInfo);
 
     return response.status(HttpStatus.CREATED).json(user);
-    //catch (error) {
-    // if (error) {
-    //   console.log(error);
-    //   throw new HttpException(
-    //     "Hove um erro! ",
-    //    HttpStatus.INTERNAL_SERVER_ERROR,
-    //  );
-    // }
   }
-  //}
+
 
   @Get("confirmEmail/:key")
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
-    const valid = await this.keyService.confirmEmailCadastro(key);
+    const existingKey = await this.keyService.confirmEmailCadastro(key);
+    
+    if (existingKey) {
+      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`
 
-    if (valid) {
       return response
         .status(HttpStatus.CREATED)
-        .redirect("www.borarachar.online/register/complete/{token}");
+        .redirect(`www.borarachar.online/register/complete/${token}`);
     } else {
       return response.redirect("www.borarachar.online");
     }
