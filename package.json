@@ -14,7 +14,7 @@
     "lint": "eslint . --config ./.eslintrc.js --ext js,jsx,ts,tsx --fix",
     "prepare": "husky install",
     "pre-commit": "lint-staged",
-    "prismix": "prismix && prisma format",
+    "prismix": "npx prismix && prisma format",
     "seed": "npx prisma db seed",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
