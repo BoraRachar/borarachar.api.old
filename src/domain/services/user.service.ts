@@ -58,7 +58,6 @@ export class UserService {
       },
     });
 
-    console.log(user);
 
     const key = await this.keyService.createKeyConfirmEmail(user);
 
