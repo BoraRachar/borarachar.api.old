@@ -30,6 +30,14 @@ export class UserService {
     return user;
   }
 
+  async findOneUserById(userId: string): Promise<User | null>{
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }
+    })
+
+    return user;
+  }
+
   async socialUserCreate(data: Prisma.UserCreateInput): Promise<User> {
     const user = await this.prisma.user.create({ data });
 
@@ -57,7 +65,6 @@ export class UserService {
         password: await encryptPass(data.password),
       },
     });
-
 
     const key = await this.keyService.createKeyConfirmEmail(user);
 
