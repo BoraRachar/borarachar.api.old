@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
-  Query,
+  Put,
   Res,
 } from "@nestjs/common";
 import { CreateUserDto } from "src/domain/dto/create-user.dto";
@@ -14,6 +14,7 @@ import { UserService } from "src/domain/services/user.service";
 import { Response } from "express";
 import { ApiTags } from "@nestjs/swagger";
 import { KeyService } from "src/domain/services/key.service";
+import { CompleteSignUpDTO } from "src/domain/dto/complete-signup.dto";
 
 @ApiTags("User")
 @Controller("user")
@@ -63,7 +64,11 @@ export class UserController {
     }
   }
 
-  //token -> userId(uuid) "$" +  secret
-  // getUser -> token(UserId)
-  // putUser -> nome, sobrenome, termos, cpf -> (return login)
+  @Put("completeSignUp/:userId")
+  async completeSignUp(@Param("userId") userId: string, @Body() data: CompleteSignUpDTO, @Res() response: Response) {
+
+    const updatedUser = await this.userService.completeSignUp(userId, data)
+
+    return response.status(HttpStatus.CREATED).redirect("www.borarachar.online/register/successfully")
+  }
 }
