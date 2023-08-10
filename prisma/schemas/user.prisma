@@ -6,6 +6,7 @@ model User {
   provider     String?
   nome         String?
   sobreNome    String?
+  cpf          String?   @unique
   termos       Boolean?  @default(false)
   validateUser Boolean?  @default(false)
   createdAt    DateTime  @default(now())
