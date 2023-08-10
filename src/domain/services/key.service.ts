@@ -37,7 +37,7 @@ export class KeyService {
 
     const validDate = compareDates(existKey.validate, now);
 
-    if (validDate == -1 || validDate == 0) {
+    if (validDate == +1 || validDate == 0) {
       await this.prisma.key.update({
         where: {
           id: existKey.id,
@@ -56,7 +56,7 @@ export class KeyService {
         },
       });
 
-      return true;
+      return existKey;
     } else {
       await this.prisma.key.update({
         where: {
