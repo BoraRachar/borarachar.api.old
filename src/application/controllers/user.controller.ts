@@ -30,19 +30,36 @@ export class UserController {
     return response.status(HttpStatus.CREATED).json(user);
   }
 
-
   @Get("confirmEmail/:key")
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
     const existingKey = await this.keyService.confirmEmailCadastro(key);
-    
+
     if (existingKey) {
-      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`
+      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`;
 
       return response
         .status(HttpStatus.CREATED)
         .redirect(`www.borarachar.online/register/complete/${token}`);
     } else {
       return response.redirect("www.borarachar.online");
+    }
+  }
+
+  @Get("getUserByToken/:token")
+  async getUserByToken(
+    @Param("token") token: string,
+    @Res() response: Response,
+  ) {
+    const userId = token.split("$")[0];
+
+    const user = await this.userService.findOneUserById(userId);
+    if (user) {
+      return response.status(HttpStatus.OK).json({
+        userId: user.id,
+        email: user.email,
+      });
+    } else {
+      throw new HttpException("Token inválido", HttpStatus.BAD_REQUEST);
     }
   }
 
