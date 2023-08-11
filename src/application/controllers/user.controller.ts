@@ -13,7 +13,7 @@ import { Redirect } from "@nestjsplus/redirect";
 import { CreateUserDto } from "src/domain/dto/create-user.dto";
 import { UserService } from "src/domain/services/user.service";
 import { Response } from "express";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { KeyService } from "src/domain/services/key.service";
 import { CompleteSignUpDTO } from "src/domain/dto/complete-signup.dto";
 
@@ -26,6 +26,9 @@ export class UserController {
   ) {}
 
   @Post()
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   async createUser(@Body() userInfo: CreateUserDto, @Res() response: Response) {
     const user = await this.userService.createUser(userInfo);
 
@@ -33,6 +36,9 @@ export class UserController {
   }
 
   @Get("confirmEmail/:key")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @Redirect()
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
     const existingKey = await this.keyService.confirmEmailCadastro(key);
@@ -49,6 +55,9 @@ export class UserController {
   }
 
   @Get("getUserByToken/:token")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   async getUserByToken(
     @Param("token") token: string,
     @Res() response: Response,
@@ -67,6 +76,9 @@ export class UserController {
   }
 
   @Put("completeSignUp/:userId")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   @Redirect()
   async completeSignUp(
     @Param("userId") userId: string,
