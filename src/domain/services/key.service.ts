@@ -3,7 +3,7 @@ import { User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import { Key } from "../entities/interfaces/key.interface";
 import { PrismaService } from "./prisma.service";
-import { STATUS_CODES } from "http";
+import { compareDates } from "../core/dates";
 
 @Injectable()
 export class KeyService {
@@ -26,18 +26,25 @@ export class KeyService {
 
   async confirmEmailCadastro(key: string) {
     const existKey = await this.prisma.key.findUnique({
-      where: { value: key, status: true },
+      where: { value: key },
     });
 
     if (existKey == null) {
       throw new HttpException("Chave invalida", HttpStatus.NOT_FOUND);
     }
 
+    if (existKey.status == false) {
+      throw new HttpException(
+        "Chave vencida, por favor solicitar um novo email de confirmação",
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const now = new Date();
 
     const validDate = compareDates(existKey.validate, now);
 
-    if (validDate == -1 || validDate == 0) {
+    if (validDate == +1 || validDate == 0) {
       await this.prisma.key.update({
         where: {
           id: existKey.id,
@@ -56,7 +63,7 @@ export class KeyService {
         },
       });
 
-      return true;
+      return existKey;
     } else {
       await this.prisma.key.update({
         where: {

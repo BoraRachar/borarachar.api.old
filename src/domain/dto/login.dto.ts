@@ -5,19 +5,19 @@ import { IsEmail, IsNotEmpty, IsString, Min, MinLength } from "class-validator";
 export class LoginInfoDto {
   @ApiProperty({
     type: String,
-    description: "Email is required.",
+    description: "Email é obrigatório.",
   })
-  @IsNotEmpty({ message: "This field can't be empty." })
+  @IsNotEmpty({ message: "Email não pode ser vazio." })
   @IsEmail()
-  @IsString({ message: "This field must be a string." })
+  @IsString({ message: "Email deve ser uma string." })
   email: string;
 
   @ApiProperty({
     type: String,
-    description: "Password is required.",
+    description: "Senha é obrigatória.",
   })
-  @IsNotEmpty({ message: "This field can't be empty." })
-  @MinLength(8, { message: "This field must have at least 8 characters." })
+  @IsNotEmpty({ message: "Senha não pode ser vazia." })
+  @MinLength(8, { message: "Senha precisa de no mínimo 8 caracteres." })
   @Type(() => String)
   password: string;
 }

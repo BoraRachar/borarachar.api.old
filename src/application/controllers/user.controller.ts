@@ -6,14 +6,16 @@ import {
   HttpStatus,
   Param,
   Post,
-  Query,
+  Put,
   Res,
 } from "@nestjs/common";
+import { Redirect } from "@nestjsplus/redirect";
 import { CreateUserDto } from "src/domain/dto/create-user.dto";
 import { UserService } from "src/domain/services/user.service";
 import { Response } from "express";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
 import { KeyService } from "src/domain/services/key.service";
+import { CompleteSignUpDTO } from "src/domain/dto/complete-signup.dto";
 
 @ApiTags("User")
 @Controller("user")
@@ -24,40 +26,68 @@ export class UserController {
   ) {}
 
   @Post()
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   async createUser(@Body() userInfo: CreateUserDto, @Res() response: Response) {
-    try {
-      const user = await this.userService.createUser(userInfo);
+    const user = await this.userService.createUser(userInfo);
 
-      return response.status(HttpStatus.CREATED).json(user);
-    } catch (error) {
-      if (error) {
-        throw new HttpException(
-          "Hove um erro! ",
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
+    return response.status(HttpStatus.CREATED).json(user);
   }
 
   @Get("confirmEmail/:key")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
+  @Redirect()
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
-    try {
-      const valid = await this.keyService.confirmEmailCadastro(key);
+    const existingKey = await this.keyService.confirmEmailCadastro(key);
+    if (existingKey) {
+      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`;
 
-      if (valid) {
-        return response
-          .status(HttpStatus.CREATED)
-          .redirect("www.borarachar.online");
-      } else {
-        return response.redirect("www.borarachar.online");
-      }
-    } catch (error) {
-      if (error) {
-        throw new HttpException(
-          "Hove um erro! ",
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
+      const url = `www.borarachar.online/register/complete/${token}`;
+
+      return { statusCode: HttpStatus.ACCEPTED, url };
+    } else {
+      const url = `www.borarachar.online`;
+      return { statusCode: HttpStatus.FOUND, url };
     }
+  }
+
+  @Get("getUserByToken/:token")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
+  async getUserByToken(
+    @Param("token") token: string,
+    @Res() response: Response,
+  ) {
+    const userId = token.split("$")[0];
+
+    const user = await this.userService.findOneUserById(userId);
+    if (user) {
+      return response.status(HttpStatus.OK).json({
+        userId: user.id,
+        email: user.email,
+      });
+    } else {
+      throw new HttpException("Token inválido", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put("completeSignUp/:userId")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
+  @Redirect()
+  async completeSignUp(
+    @Param("userId") userId: string,
+    @Body() data: CompleteSignUpDTO,
+  ) {
+    await this.userService.completeSignUp(userId, data);
+
+    const url = `www.borarachar.online/register/successfully`;
+
+    return { statusCode: HttpStatus.CREATED, url };
   }
 }

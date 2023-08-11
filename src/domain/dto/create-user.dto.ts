@@ -1,14 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
-  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsString,
-  Length,
-  Matches,
+  IsStrongPassword,
   MinLength,
-  isBoolean,
 } from "class-validator";
+import { Match } from "../decorators/match.decorator";
 
 export class CreateUserDto {
   @ApiProperty({
@@ -24,8 +22,21 @@ export class CreateUserDto {
     description: "Senha é obrigatória",
   })
   @IsString()
-  @MinLength(8)
+  @MinLength(8, { message: "Deve ter no mínimo 8 caracteres" })
   @IsNotEmpty({ message: "Não pode ser vazio" })
+  @IsStrongPassword(
+    {
+      minLength: 8,
+      minLowercase: 1,
+      minSymbols: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    },
+    {
+      message:
+        "Senha deve conter no mínimo 8 caracteres, 1 letra minúscula, 1 letra maiúscula e 1 caractere especial",
+    },
+  )
   password: string;
   @ApiProperty({
     type: String,
@@ -33,26 +44,9 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(8)
+  @Match("password", {
+    message: "Confirmação de senha deve ser igual a senha informada.",
+  })
   @IsNotEmpty({ message: "Não pode ser vazio" })
   confirmPassword: string;
-  @ApiProperty({
-    type: String,
-    description: "Nome é obrigatório",
-  })
-  @IsString()
-  @IsNotEmpty({ message: "Não pode ser vazio" })
-  nome: string;
-  @ApiProperty({
-    type: String,
-    description: "Sobre Nome é obrigatório",
-  })
-  @IsString()
-  @IsNotEmpty({ message: "Não pode ser vazio" })
-  sobreNome: string;
-  @ApiProperty({
-    type: Boolean,
-    description: "Termos é obrigatório",
-  })
-  @IsBoolean()
-  termos: boolean;
 }
