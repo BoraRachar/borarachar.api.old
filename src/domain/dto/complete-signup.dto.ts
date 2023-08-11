@@ -1,11 +1,20 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNotEmpty, IsNumberString, IsString, Length, MaxLength, MinLength } from "class-validator";
+import { IsCPF } from "class-validator-cpf";
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumberString,
+  IsString,
+  Length,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 import { IsTrue } from "../decorators/isTrue.decorator";
 
 export class CompleteSignUpDTO {
   @ApiProperty({
     type: String,
-    description: "Nome é obrigatório."
+    description: "Nome é obrigatório.",
   })
   @IsNotEmpty({ message: "Nome não pode ser vazio." })
   @MinLength(3, { message: "Nome deve ter no mínimo 3 caracteres." })
@@ -15,7 +24,7 @@ export class CompleteSignUpDTO {
 
   @ApiProperty({
     type: String,
-    description: "Sobrenome é obrigatório."
+    description: "Sobrenome é obrigatório.",
   })
   @IsNotEmpty({ message: "Sobrenome não pode ser vazio." })
   @MinLength(3, { message: "Sobrenome deve ter no mínimo 3 caracteres." })
@@ -25,18 +34,19 @@ export class CompleteSignUpDTO {
 
   @ApiProperty({
     type: String,
-    description: "CPF é obrigatório."
+    description: "CPF é obrigatório.",
   })
+  //@IsCPF({ message: "CPF Invalido" })
   @IsNotEmpty({ message: "CPF não pode ser vazio." })
   @Length(11, 11, { message: "CPF deve conter exatamente 11 caracteres." })
   @IsNumberString() // corrigir ou colocar validate
   cpf: string;
 
   @ApiProperty({
-    type: String,
-    description: "Termos são obrigatórios."
+    type: Boolean,
+    description: "Termos são obrigatórios.",
   })
   @IsBoolean()
-  @IsTrue("termos", {message: "Termos devem ser aceitos."})
+  @IsTrue("termos", { message: "Termos devem ser aceitos." })
   termos: boolean;
 }

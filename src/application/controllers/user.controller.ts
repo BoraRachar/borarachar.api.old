@@ -9,6 +9,7 @@ import {
   Put,
   Res,
 } from "@nestjs/common";
+import { Redirect } from "@nestjsplus/redirect";
 import { CreateUserDto } from "src/domain/dto/create-user.dto";
 import { UserService } from "src/domain/services/user.service";
 import { Response } from "express";
@@ -32,17 +33,18 @@ export class UserController {
   }
 
   @Get("confirmEmail/:key")
+  @Redirect()
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
     const existingKey = await this.keyService.confirmEmailCadastro(key);
-
     if (existingKey) {
       const token = `${existingKey.userId}$${process.env.JWT_SECRET}`;
 
-      return response
-        .status(HttpStatus.CREATED)
-        .redirect(`www.borarachar.online/register/complete/${token}`);
+      const url = `www.borarachar.online/register/complete/${token}`;
+
+      return { statusCode: HttpStatus.ACCEPTED, url };
     } else {
-      return response.redirect("www.borarachar.online");
+      const url = `www.borarachar.online`;
+      return { statusCode: HttpStatus.FOUND, url };
     }
   }
 
@@ -65,10 +67,15 @@ export class UserController {
   }
 
   @Put("completeSignUp/:userId")
-  async completeSignUp(@Param("userId") userId: string, @Body() data: CompleteSignUpDTO, @Res() response: Response) {
+  @Redirect()
+  async completeSignUp(
+    @Param("userId") userId: string,
+    @Body() data: CompleteSignUpDTO,
+  ) {
+    await this.userService.completeSignUp(userId, data);
 
-    const updatedUser = await this.userService.completeSignUp(userId, data)
+    const url = `www.borarachar.online/register/successfully`;
 
-    return response.status(HttpStatus.CREATED).redirect("www.borarachar.online/register/successfully")
+    return { statusCode: HttpStatus.CREATED, url };
   }
 }

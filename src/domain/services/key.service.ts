@@ -26,11 +26,18 @@ export class KeyService {
 
   async confirmEmailCadastro(key: string) {
     const existKey = await this.prisma.key.findUnique({
-      where: { value: key, status: true },
+      where: { value: key },
     });
 
     if (existKey == null) {
       throw new HttpException("Chave invalida", HttpStatus.NOT_FOUND);
+    }
+
+    if (existKey.status == false) {
+      throw new HttpException(
+        "Chave vencida, por favor solicitar um novo email de confirmação",
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const now = new Date();

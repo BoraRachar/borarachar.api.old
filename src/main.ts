@@ -23,7 +23,10 @@ async function bootstrap() {
   SwaggerModule.setup("/v1", app, createDocument(app));
 
   app.useLogger(app.get(Logger));
-  app.enableCors();
+  app.enableCors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  });
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix("v1");
 
