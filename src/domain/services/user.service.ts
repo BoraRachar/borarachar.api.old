@@ -80,4 +80,21 @@ export class UserService {
       };
     }
   }
+
+  async completeSignUp(userId: string, data: Prisma.UserUpdateInput): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }
+    })
+
+    if(!user) throw new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND)
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...data
+      }
+    })
+
+    return updatedUser;
+  }
 }
