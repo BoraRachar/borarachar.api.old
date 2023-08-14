@@ -4,7 +4,7 @@ import { stringField } from "../../../src/common/helper/stringField.helper";
 import { CreateUserDto } from "../../../src/domain/dto/create-user.dto";
 import { CreateUserErrors } from "../../../src/domain/enum/create-user-errors.enum.spec";
 
-describe.only("Create user DTO test suite", () => {
+describe("Create user DTO test suite", () => {
   test("ERROR - should throw error if email is not provided", async () => {
     const data = {
       password: "any-password@123",
