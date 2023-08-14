@@ -7,14 +7,15 @@ import {
   MinLength,
 } from "class-validator";
 import { Match } from "../decorators/match.decorator";
+import { CreateUserErrors } from '../enum/create-user-errors.enum.spec';
 
 export class CreateUserDto {
   @ApiProperty({
     type: String,
     description: "Email é obrigatório",
   })
-  @IsNotEmpty({ message: "Não pode ser vazio" })
-  @IsEmail()
+  @IsNotEmpty({ message: CreateUserErrors.EMAIL_REQUIRED })
+  @IsEmail({}, {message: "Formato de email nao válido."})
   email: string;
 
   @ApiProperty({
@@ -23,7 +24,7 @@ export class CreateUserDto {
   })
   @IsString()
   @MinLength(8, { message: "Deve ter no mínimo 8 caracteres" })
-  @IsNotEmpty({ message: "Não pode ser vazio" })
+  @IsNotEmpty({ message: CreateUserErrors.PASSWORD_REQUIRED })
   @IsStrongPassword(
     {
       minLength: 8,
@@ -33,8 +34,7 @@ export class CreateUserDto {
       minNumbers: 1,
     },
     {
-      message:
-        "Senha deve conter no mínimo 8 caracteres, 1 letra minúscula, 1 letra maiúscula e 1 caractere especial",
+      message: CreateUserErrors.PASSWORD_MIN_REQUIREMENTS,
     },
   )
   password: string;
@@ -45,8 +45,8 @@ export class CreateUserDto {
   @IsString()
   @MinLength(8)
   @Match("password", {
-    message: "Confirmação de senha deve ser igual a senha informada.",
+    message: CreateUserErrors.PASSWORDS_MATCH,
   })
-  @IsNotEmpty({ message: "Não pode ser vazio" })
+  @IsNotEmpty({ message: CreateUserErrors.CONFIRM_PASSWORD_REQUIRED })
   confirmPassword: string;
 }
