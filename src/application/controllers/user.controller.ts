@@ -7,13 +7,19 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
 } from "@nestjs/common";
 import { Redirect } from "@nestjsplus/redirect";
 import { CreateUserDto } from "src/domain/dto/create-user.dto";
 import { UserService } from "src/domain/services/user.service";
 import { Response } from "express";
-import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import {
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { KeyService } from "src/domain/services/key.service";
 import { CompleteSignUpDTO } from "src/domain/dto/complete-signup.dto";
 

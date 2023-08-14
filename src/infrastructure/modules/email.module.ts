@@ -11,14 +11,13 @@ import { EmailService } from "src/domain/services/email.service";
       useFactory: async (config: ConfigService) => ({
         transport: {
           host: config.get<string>("SMTP_HOST"),
-          secure: false,
           auth: {
             user: config.get<string>("SMTP_USER"),
             pass: config.get<string>("SMTP_KEY"),
           },
         },
         defaults: {
-          from: "Bora Rachar! noreply@borarachar.online",
+          from: "suporte.borarachar@gmail.com",
         },
         template: {
           dir: "../../common/templates",
