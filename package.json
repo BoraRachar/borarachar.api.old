@@ -123,7 +123,8 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "verbose": true
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed/seed.ts"
