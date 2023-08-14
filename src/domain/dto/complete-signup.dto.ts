@@ -10,26 +10,27 @@ import {
   MinLength,
 } from "class-validator";
 import { IsTrue } from "../decorators/isTrue.decorator";
+import { CompleteSignupErrors } from '../enum/complete-signup-errors.enum';
 
 export class CompleteSignUpDTO {
   @ApiProperty({
     type: String,
     description: "Nome é obrigatório.",
   })
-  @IsNotEmpty({ message: "Nome não pode ser vazio." })
-  @MinLength(3, { message: "Nome deve ter no mínimo 3 caracteres." })
-  @MaxLength(50, { message: "Nome deve ter no máximo 50 caracteres." })
-  @IsString({ message: "Nome precisa ser uma string." })
+  @IsNotEmpty({ message: CompleteSignupErrors.NAME_REQUIRED })
+  @MinLength(3, { message: CompleteSignupErrors.NAME_MIN_LENGTH })
+  @MaxLength(50, { message: CompleteSignupErrors.NAME_MAX_LENGTH })
+  @IsString({ message: CompleteSignupErrors.NAME_IS_STRING })
   nome: string;
 
   @ApiProperty({
     type: String,
     description: "Sobrenome é obrigatório.",
   })
-  @IsNotEmpty({ message: "Sobrenome não pode ser vazio." })
-  @MinLength(3, { message: "Sobrenome deve ter no mínimo 3 caracteres." })
-  @MaxLength(50, { message: "Sobrenome deve ter no máximo 50 caracteres." })
-  @IsString({ message: "Sobrenome precisa ser uma string." })
+  @IsNotEmpty({ message: CompleteSignupErrors.LASTNAME_REQUIRED })
+  @MinLength(3, { message: CompleteSignupErrors.LASTNAME_MIN_LENGTH })
+  @MaxLength(50, { message: CompleteSignupErrors.LASTNAME_MAX_LENGTH })
+  @IsString({ message: CompleteSignupErrors.LASTNAME_IS_STRING })
   sobreNome: string;
 
   @ApiProperty({
@@ -37,16 +38,17 @@ export class CompleteSignUpDTO {
     description: "CPF é obrigatório.",
   })
   //@IsCPF({ message: "CPF Invalido" })
-  @IsNotEmpty({ message: "CPF não pode ser vazio." })
-  @Length(11, 11, { message: "CPF deve conter exatamente 11 caracteres." })
-  @IsNumberString() // corrigir ou colocar validate
+  @IsNotEmpty({ message: CompleteSignupErrors.CPF_REQUIRED })
+  @Length(11, 11, { message: CompleteSignupErrors.CPF_LENGTH })
+  @IsNumberString({}, {message: CompleteSignupErrors.CPF_IS_STRING}) // corrigir ou colocar validate
   cpf: string;
 
   @ApiProperty({
     type: Boolean,
     description: "Termos são obrigatórios.",
   })
-  @IsBoolean()
-  @IsTrue("termos", { message: "Termos devem ser aceitos." })
+  @IsNotEmpty({message: CompleteSignupErrors.TERMS_REQUIRED})
+  @IsBoolean({message: CompleteSignupErrors.TERMS_BOOLEAN})
+  @IsTrue("termos", { message: CompleteSignupErrors.TERMS_ARE_TRUE })
   termos: boolean;
 }
