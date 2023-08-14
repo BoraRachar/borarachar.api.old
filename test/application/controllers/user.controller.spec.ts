@@ -73,6 +73,42 @@ describe('User Controller test suite', () => {
       await expect(userController.createUser(data, mockRes)).rejects.toThrow()
       await expect(userController.createUser(data, mockRes)).rejects.toEqual(new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST))
     })
+
+    it("SUCCESS - should return when a user is created", async () => {
+
+      const response = {
+        message: "Usuario criado com sucesso"
+      }
+
+      userService.createUser.mockResolvedValue(response)
+
+      const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+
+      const user = await userController.createUser(data, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(HttpStatus.CREATED);
+      expect(mockRes.json).toHaveBeenCalledWith(response);
+    })
+
+    it("SUCCESS - should call userService with correct params", async () => {
+
+      const response = {
+        message: "Usuario criado com sucesso"
+      }
+
+      const mockRes = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+      } as unknown as Response
+
+      const user = await userController.createUser(data, mockRes);
+
+      expect(userService.createUser).toHaveBeenCalledWith(data);
+      expect(userService.createUser).toHaveBeenCalledTimes(1);
+    })
   })
 
 })
