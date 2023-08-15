@@ -5,7 +5,7 @@ import { UserController } from '../../../src/application/controllers/user.contro
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateUserDto } from '../../../src/domain/dto/create-user.dto';
-import { Key } from '@prisma/client';
+import { keyMock, tokenMock, userMock } from '../../mocks/index';
 
 
 describe('User Controller test suite', () => {
@@ -100,7 +100,7 @@ describe('User Controller test suite', () => {
         message: "Usuario criado com sucesso"
       }
 
-      const user = await userController.createUser(data, mockRes);
+      await userController.createUser(data, mockRes);
 
       expect(userService.createUser).toHaveBeenCalledWith(data);
       expect(userService.createUser).toHaveBeenCalledTimes(1);
@@ -108,37 +108,25 @@ describe('User Controller test suite', () => {
   })
 
   describe("GET - confirmEmail", () => {
-    const key: Key = {
-      id: 1,
-      userId: 'any-userId',
-      value: 'any-value',
-      validate: new Date(),
-      expiresIn: 1,
-      status: true
-    };
-
-    const token = `${key.userId}$${process.env.JWT_SECRET}`
-    const urlWithToken = `www.borarachar.online/register/complete/${token}`
-    const urlWithoutToken = "www.borarachar.online"
 
     it('SUCCESS - should invoke keyService with correct params', async () => {
 
-      await userController.confirmUser(key.value, mockRes);
+      await userController.confirmUser(keyMock.keyValue, mockRes);
 
-      expect(keyService.confirmEmailCadastro).toHaveBeenCalledWith(key.value);
+      expect(keyService.confirmEmailCadastro).toHaveBeenCalledWith(keyMock.keyValue);
       expect(keyService.confirmEmailCadastro).toHaveBeenCalledTimes(1)
     })
 
     it('SUCCESS - should return if key exists', async () => {
 
-      keyService.confirmEmailCadastro.mockResolvedValue(key);
+      keyService.confirmEmailCadastro.mockResolvedValue(keyMock.validKey);
 
       const response = {
         statusCode: HttpStatus.ACCEPTED,
-        url: urlWithToken
+        url: tokenMock.urlWithToken
       }
 
-      expect(await userController.confirmUser(key.value, mockRes)).toEqual(response);
+      expect(await userController.confirmUser(keyMock.validKey.value, mockRes)).toEqual(response);
     })
 
     it("ERROR - should return status 302 if key doesn't exist", async () => {
@@ -147,11 +135,88 @@ describe('User Controller test suite', () => {
 
       const response = {
         statusCode: HttpStatus.FOUND,
-        url: urlWithoutToken
+        url: tokenMock.urlWithoutToken
       }
 
-      expect(await userController.confirmUser(key.value, mockRes)).toEqual(response);
+      expect(await userController.confirmUser(keyMock.invalidKeyValue, mockRes)).toEqual(response);
     })
   })
 
+  describe("GET - getUserByToken", () => {
+
+    it("SUCCESS - should call userService with correct params", async () => {
+
+      const userId = tokenMock.validToken.split("$")[0];
+      userService.findOneUserById.mockResolvedValue(userMock.validUser)
+
+      await userController.getUserByToken(tokenMock.validToken, mockRes)
+
+      expect(userService.findOneUserById).toHaveBeenCalledWith(userId)
+      expect(userService.findOneUserById).toHaveBeenCalledTimes(1);
+    })
+
+    it("SUCCESS - should return status ok if user exists", async () => {
+
+      userService.findOneUserById.mockResolvedValue(userMock.validUser)
+
+      const response = {
+        statusCode: HttpStatus.OK,
+        message: {
+          userId: userMock.validUser.id,
+          email: userMock.validUser.email
+        }
+      };
+
+      await userController.getUserByToken(tokenMock.validToken, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(response.statusCode);
+      expect(mockRes.json).toHaveBeenCalledWith(response.message)
+    })
+
+    it("ERROR - should throw if token is invalid", async () => {
+
+      userService.findOneUserById.mockResolvedValue(null)
+
+      const response = {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Token inválido"
+      };
+
+      await expect(userController.getUserByToken(tokenMock.invalidToken, mockRes)).rejects.toThrow(
+        new HttpException("Token inválido", HttpStatus.BAD_REQUEST)
+      );
+  })
+
+  })
+
+  describe("PUT - completeSignUp", () => {
+    it("SUCCESS - should call userService with correct params", async () => {
+      await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData);
+
+      expect(userService.completeSignUp).toHaveBeenCalledWith(userMock.validId, userMock.validCompleteSignData);
+      expect(userService.completeSignUp).toHaveBeenCalledTimes(1);
+
+    })
+
+    it("SUCCESS - should return if userService returns", async () => {
+
+      userService.completeSignUp.mockResolvedValue(userMock.updatedUser);
+
+      const response = {
+        statusCode: HttpStatus.CREATED,
+        url: tokenMock.urlSuccessfullRegister
+      }
+
+      expect(await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData)).toEqual(response)
+    })
+
+    it("ERROR - should throw if userService throws", async () => {
+
+      const error = new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND);
+
+      userService.completeSignUp.mockRejectedValue(error);
+
+      await expect(userController.completeSignUp(userMock.validId, userMock.validCompleteSignData)).rejects.toThrow(error);
+    })
+  })
 })
