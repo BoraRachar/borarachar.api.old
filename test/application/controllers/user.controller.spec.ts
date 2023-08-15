@@ -5,13 +5,15 @@ import { UserController } from '../../../src/application/controllers/user.contro
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateUserDto } from '../../../src/domain/dto/create-user.dto';
+import { Key } from '@prisma/client';
 
 
 describe('User Controller test suite', () => {
   let userController: UserController;
   let userService: jest.Mocked<UserService>;
   let keyService: jest.Mocked<KeyService>;
-  let data: CreateUserDto
+  let data: CreateUserDto;
+  let mockRes: Response;
 
   beforeEach(async () => {
 
@@ -29,6 +31,11 @@ describe('User Controller test suite', () => {
       createUser: jest.fn(),
       completeSignUp: jest.fn(),
     } as unknown as UserService;
+
+    mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn()
+    } as unknown as Response
 
     data = {
       email: 'any-email@email.com',
@@ -51,6 +58,10 @@ describe('User Controller test suite', () => {
     userController = module.get<UserController>(UserController);
     userService = module.get(UserService);
     keyService = module.get(KeyService);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   })
 
   it('should be defined', () => {
@@ -65,11 +76,6 @@ describe('User Controller test suite', () => {
         new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST)
       )
 
-      const mockRes = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      } as unknown as Response
-
       await expect(userController.createUser(data, mockRes)).rejects.toThrow()
       await expect(userController.createUser(data, mockRes)).rejects.toEqual(new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST))
     })
@@ -82,12 +88,7 @@ describe('User Controller test suite', () => {
 
       userService.createUser.mockResolvedValue(response)
 
-      const mockRes = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      } as unknown as Response
-
-      const user = await userController.createUser(data, mockRes);
+      await userController.createUser(data, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(HttpStatus.CREATED);
       expect(mockRes.json).toHaveBeenCalledWith(response);
@@ -99,15 +100,57 @@ describe('User Controller test suite', () => {
         message: "Usuario criado com sucesso"
       }
 
-      const mockRes = {
-        status: jest.fn().mockReturnThis(),
-        json: jest.fn()
-      } as unknown as Response
-
       const user = await userController.createUser(data, mockRes);
 
       expect(userService.createUser).toHaveBeenCalledWith(data);
       expect(userService.createUser).toHaveBeenCalledTimes(1);
+    })
+  })
+
+  describe("GET - confirmEmail", () => {
+    const key: Key = {
+      id: 1,
+      userId: 'any-userId',
+      value: 'any-value',
+      validate: new Date(),
+      expiresIn: 1,
+      status: true
+    };
+
+    const token = `${key.userId}$${process.env.JWT_SECRET}`
+    const urlWithToken = `www.borarachar.online/register/complete/${token}`
+    const urlWithoutToken = "www.borarachar.online"
+
+    it('SUCCESS - should invoke keyService with correct params', async () => {
+
+      await userController.confirmUser(key.value, mockRes);
+
+      expect(keyService.confirmEmailCadastro).toHaveBeenCalledWith(key.value);
+      expect(keyService.confirmEmailCadastro).toHaveBeenCalledTimes(1)
+    })
+
+    it('SUCCESS - should return if key exists', async () => {
+
+      keyService.confirmEmailCadastro.mockResolvedValue(key);
+
+      const response = {
+        statusCode: HttpStatus.ACCEPTED,
+        url: urlWithToken
+      }
+
+      expect(await userController.confirmUser(key.value, mockRes)).toEqual(response);
+    })
+
+    it("ERROR - should return status 302 if key doesn't exist", async () => {
+
+      keyService.confirmEmailCadastro.mockResolvedValue(null);
+
+      const response = {
+        statusCode: HttpStatus.FOUND,
+        url: urlWithoutToken
+      }
+
+      expect(await userController.confirmUser(key.value, mockRes)).toEqual(response);
     })
   })
 
