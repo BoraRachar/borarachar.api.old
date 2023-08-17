@@ -24,5 +24,6 @@ export class EmailService {
     });
 
     console.log("SendEmail: ", JSON.stringify(sendEmail));
+    return sendEmail;
   }
 }

@@ -5,6 +5,8 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
+import { v4 as uuidv4 } from "uuid";
+import { TypeKeys } from "src/common/constants/key,default";
 
 @Injectable()
 export class UserService {
@@ -30,10 +32,10 @@ export class UserService {
     return user;
   }
 
-  async findOneUserById(userId: string): Promise<User | null>{
+  async findOneUserById(userId: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    })
+      where: { id: userId },
+    });
 
     return user;
   }
@@ -46,6 +48,49 @@ export class UserService {
     await this.emailService.sendEmailBoasVindas(user, key.value);
 
     return user;
+  }
+
+  async validUser(email) {
+    const now = new Date();
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const keys = await this.prisma.key.findMany({
+      where: {
+        userId: user.id,
+        type: "Cadastro",
+      },
+    });
+
+    for (const key in keys) {
+      await this.prisma.key.update({
+        where: {
+          id: keys[key].id,
+        },
+        data: {
+          status: false,
+        },
+      });
+    }
+
+    const newKey = await this.keyService.createKey(
+      user,
+      TypeKeys.ResendEmailConfirmar,
+    );
+
+    const send = await this.emailService.sendEmailBoasVindas(
+      user,
+      newKey.value,
+    );
+    if (send.accepted != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<JsonObject> {
@@ -81,20 +126,27 @@ export class UserService {
     }
   }
 
-  async completeSignUp(userId: string, data: Prisma.UserUpdateInput): Promise<User> {
+  async completeSignUp(
+    userId: string,
+    data: Prisma.UserUpdateInput,
+  ): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId }
-    })
+      where: { id: userId },
+    });
 
-    if(!user) throw new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND)
+    if (!user)
+      throw new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND);
 
     const updatedUser = await this.prisma.user.update({
       where: { id: userId },
       data: {
-        ...data
-      }
-    })
+        ...data,
+      },
+    });
 
     return updatedUser;
   }
+}
+function uuidv4(): string {
+  throw new Error("Function not implemented.");
 }
