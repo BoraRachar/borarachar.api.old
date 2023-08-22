@@ -34,7 +34,8 @@ describe('User Controller test suite', () => {
 
     mockRes = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn()
+      json: jest.fn(),
+      redirect: jest.fn()
     } as unknown as Response
 
     data = {
@@ -117,28 +118,26 @@ describe('User Controller test suite', () => {
       expect(keyService.confirmEmailCadastro).toHaveBeenCalledTimes(1)
     })
 
-    it('SUCCESS - should return if key exists', async () => {
+    it('SUCCESS - should redirect to the complete registration URL page if key is found', async () => {
 
-      keyService.confirmEmailCadastro.mockResolvedValue(keyMock.validKey);
+      keyService.confirmEmailCadastro.mockResolvedValue(keyMock.signUpValidKey);
 
-      const response = {
-        statusCode: HttpStatus.ACCEPTED,
-        url: tokenMock.urlWithToken
-      }
+      const completeRegistrationURL = `http://borarachar.online/register/complete/${tokenMock.validToken}`;
 
-      expect(await userController.confirmUser(keyMock.validKey.value, mockRes)).toEqual(response);
+      await userController.confirmUser(keyMock.signUpValidKey.value, mockRes);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith(completeRegistrationURL);
     })
 
-    it("ERROR - should return status 302 if key doesn't exist", async () => {
+    it("SUCCESS - should redirect to home page if key is not found", async () => {
 
       keyService.confirmEmailCadastro.mockResolvedValue(null);
 
-      const response = {
-        statusCode: HttpStatus.FOUND,
-        url: tokenMock.urlWithoutToken
-      }
+      const homePageURL = `http://borarachar.online`;
 
-      expect(await userController.confirmUser(keyMock.invalidKeyValue, mockRes)).toEqual(response);
+      await userController.confirmUser(keyMock.signUpValidKey.value, mockRes);
+
+      expect(mockRes.redirect).toHaveBeenCalledWith(homePageURL);
     })
   })
 
@@ -191,23 +190,23 @@ describe('User Controller test suite', () => {
 
   describe("PUT - completeSignUp", () => {
     it("SUCCESS - should call userService with correct params", async () => {
-      await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData);
+      await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData, mockRes);
 
       expect(userService.completeSignUp).toHaveBeenCalledWith(userMock.validId, userMock.validCompleteSignData);
       expect(userService.completeSignUp).toHaveBeenCalledTimes(1);
 
     })
 
-    it("SUCCESS - should return if userService returns", async () => {
+    it("SUCCESS - should redirect to successfully registration page if userService returns", async () => {
 
       userService.completeSignUp.mockResolvedValue(userMock.updatedUser);
 
-      const response = {
-        statusCode: HttpStatus.CREATED,
-        url: tokenMock.urlSuccessfullRegister
-      }
+      const successRegistrationURL = `http://borarachar.online/register/successfully`;
 
-      expect(await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData)).toEqual(response)
+      await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData, mockRes)
+
+      expect(mockRes.redirect).toHaveBeenCalledWith(successRegistrationURL)
+      expect(mockRes.redirect).toHaveBeenCalledTimes(1)
     })
 
     it("ERROR - should throw if userService throws", async () => {
@@ -216,7 +215,7 @@ describe('User Controller test suite', () => {
 
       userService.completeSignUp.mockRejectedValue(error);
 
-      await expect(userController.completeSignUp(userMock.validId, userMock.validCompleteSignData)).rejects.toThrow(error);
+      await expect(userController.completeSignUp(userMock.validId, userMock.validCompleteSignData, mockRes)).rejects.toThrow(error);
     })
   })
 })
