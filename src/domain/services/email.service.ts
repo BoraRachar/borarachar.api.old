@@ -8,6 +8,7 @@ export class EmailService {
   constructor(private mailService: MailerService) {}
 
   async sendEmailBoasVindas(user: User, key: string) {
+    console.info("Start Send Email");
     const confirmUrl = `${process.env.HOST}/v1/user/confirmEmail/${key}`;
 
     const nome =
@@ -23,7 +24,7 @@ export class EmailService {
       },
     });
 
-    console.log("SendEmail: ", JSON.stringify(sendEmail));
+    console.info("SendEmail: ", JSON.stringify(sendEmail));
     return sendEmail;
   }
 }

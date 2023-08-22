@@ -5,7 +5,6 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
-import { v4 as uuidv4 } from "uuid";
 import { TypeKeys } from "src/common/constants/key,default";
 
 @Injectable()
@@ -100,6 +99,8 @@ export class UserService {
       },
     });
 
+    console.info("ExistsUser: ", exist != null ? exist.id : "Não cadastrado");
+
     if (exist != null) {
       throw new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST);
     }
@@ -110,6 +111,8 @@ export class UserService {
         password: await encryptPass(data.password),
       },
     });
+
+    console.info("CreateUser: ", user.id);
 
     const key = await this.keyService.createKeyConfirmEmail(user);
 
