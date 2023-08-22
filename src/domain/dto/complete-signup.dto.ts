@@ -40,7 +40,6 @@ export class CompleteSignUpDTO {
   @IsCPF({ message: CompleteSignupErrors.CPF_IS_INVALID })
   @IsNotEmpty({ message: CompleteSignupErrors.CPF_REQUIRED })
   @Length(11, 11, { message: CompleteSignupErrors.CPF_LENGTH })
-  //@IsNumberString({}, {message: CompleteSignupErrors.CPF_IS_STRING}) // corrigir ou colocar validate
   cpf: string;
 
   @ApiProperty({
