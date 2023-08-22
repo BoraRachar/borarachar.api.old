@@ -85,11 +85,8 @@ export class UserService {
       user,
       newKey.value,
     );
-    if (send.accepted != null) {
-      return true;
-    } else {
-      return false;
-    }
+
+    return true;
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<JsonObject> {
@@ -120,10 +117,12 @@ export class UserService {
 
     if (user != null) {
       return {
+        statusCode: 201,
         message: "Usuario criado com sucesso",
       };
     } else {
       return {
+        statusCode: 400,
         message: "Falha ao criar o usuario",
       };
     }
@@ -149,7 +148,4 @@ export class UserService {
 
     return updatedUser;
   }
-}
-function uuidv4(): string {
-  throw new Error("Function not implemented.");
 }

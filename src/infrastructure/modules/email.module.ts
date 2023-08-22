@@ -12,7 +12,7 @@ import { join } from "path";
   imports: [
     BullModule.registerQueue({
       name: "email",
-      processors: [join(__dirname, "../processors/bull.ts")],
+      processors: [join(__dirname, "../processors/bull.js")],
     }),
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({

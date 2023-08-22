@@ -8,22 +8,29 @@ export class EmailConsumer {
   constructor(private readonly mailService: MailerService) {}
 
   @Process("email-job")
-  async handleSendEmail(job: Job) {
+  handleSendEmail(job: Job) {
     console.info("Send Email Queue Start");
 
     const { email, nome, url } = job.data;
 
-    const sendEmail = await this.mailService.sendMail({
-      to: email,
-      subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
-      template: join(__dirname, "../../common/templates", "bemvindo"),
-      context: {
-        nome,
-        confirmUrl: url,
-      },
-    });
+    console.info("Dados Email: ", JSON.stringify(job.data));
 
-    console.info("SendEmail: ", JSON.stringify(sendEmail));
+    this.mailService
+      .sendMail({
+        to: email,
+        subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
+        template: join(__dirname, "../../common/templates", "bemvindo"),
+        context: {
+          nome,
+          confirmUrl: url,
+        },
+      })
+      .then((s) => {
+        console.info("SendEmail success: ", JSON.stringify(s));
+      })
+      .catch((error) =>
+        console.info("SendEmail Error: ", JSON.stringify(error)),
+      );
 
     console.info("Send Email Queue Complete");
   }
