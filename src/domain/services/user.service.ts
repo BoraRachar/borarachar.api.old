@@ -5,7 +5,7 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
-import { TypeKeys } from "src/common/constants/key,default";
+import { TypeKeys } from "../../common/constants/key.default";
 
 @Injectable()
 export class UserService {
