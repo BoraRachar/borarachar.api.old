@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Res,
   Redirect,
 } from "@nestjs/common";
@@ -21,8 +22,8 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from "@nestjs/swagger";
-import { KeyService } from "../../domain/services/key.service";
-import { CompleteSignUpDTO } from "../../domain/dto/complete-signup.dto";
+import { KeyService } from "src/domain/services/key.service";
+import { CompleteSignUpDTO } from "src/domain/dto/complete-signup.dto";
 
 @ApiTags("User")
 @Controller("user")

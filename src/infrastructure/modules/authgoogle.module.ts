@@ -14,9 +14,14 @@ import { PrismaModule } from "nestjs-prisma";
 import { EmailService } from "src/domain/services/email.service";
 import { EmailModule } from "./email.module";
 import { KeyService } from "src/domain/services/key.service";
+import { BullModule } from "@nestjs/bull";
 
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: "email",
+      processors: [join(__dirname, "../processors/bull.ts")],
+    }),
     PrismaModule,
     EmailModule,
     PassportModule.register({ defaultStrategy: "jwt" }),
