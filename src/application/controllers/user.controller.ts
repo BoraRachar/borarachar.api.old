@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Res,
   Redirect,
 } from "@nestjs/common";
@@ -51,11 +50,11 @@ export class UserController {
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
     const existingKey = await this.keyService.confirmEmailCadastro(key);
     if (existingKey) {
-      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`;
+      const token = await this.keyService.createToken(existingKey.userId);
+      console.info("ConfirmToken: ", token);
 
       const url = `http://borarachar.online/register/complete/${token}`;
 
-      //return { statusCode: HttpStatus.FOUND, url };
       return response.redirect(url);
     } else {
       const url = `http://borarachar.online`;
@@ -115,6 +114,7 @@ export class UserController {
       });
     } else {
       return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
         mensagem:
           "Houve um erro ao tentar envia o email. Tente novamente mais tarde!",
       });

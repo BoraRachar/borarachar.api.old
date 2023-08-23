@@ -57,36 +57,46 @@ export class UserService {
         email: email,
       },
     });
+    console.info("UserValid: ", user != null ? user.id : "Invalido");
 
-    const keys = await this.prisma.key.findMany({
-      where: {
-        userId: user.id,
-        type: "Cadastro",
-      },
-    });
-
-    for (const key in keys) {
-      await this.prisma.key.update({
+    if (user != null) {
+      const keys = await this.prisma.key.findMany({
         where: {
-          id: keys[key].id,
-        },
-        data: {
-          status: false,
+          userId: user.id,
+          type: "Cadastro",
         },
       });
+
+      console.info("KeysCount: ", keys.length);
+
+      for (const key in keys) {
+        console.info("KeyUpdate: ", key);
+        await this.prisma.key.update({
+          where: {
+            id: keys[key].id,
+          },
+          data: {
+            status: false,
+          },
+        });
+      }
+
+      const newKey = await this.keyService.createKey(
+        user,
+        TypeKeys.ResendEmailConfirmar,
+      );
+
+      console.info("NewKey: ", newKey.value);
+
+      const send = await this.emailService.sendEmailBoasVindas(
+        user,
+        newKey.value,
+      );
+
+      return true;
+    } else {
+      return false;
     }
-
-    const newKey = await this.keyService.createKey(
-      user,
-      TypeKeys.ResendEmailConfirmar,
-    );
-
-    const send = await this.emailService.sendEmailBoasVindas(
-      user,
-      newKey.value,
-    );
-
-    return true;
   }
 
   async createUser(data: Prisma.UserCreateInput): Promise<JsonObject> {
@@ -143,6 +153,7 @@ export class UserService {
       where: { id: userId },
       data: {
         ...data,
+        updatedAt: Date(),
       },
     });
 

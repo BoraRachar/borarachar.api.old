@@ -26,6 +26,10 @@ export class KeyService {
     return key;
   }
 
+  async createToken(userId: string) {
+    return `${userId}$${process.env.JWT_SECRET}`;
+  }
+
   async createKeyConfirmEmail(user: User) {
     const days = 2;
     const validate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
