@@ -20,7 +20,10 @@ describe('User Controller test suite', () => {
     const keyServiceMock = {
       confirmEmailCadastro: jest.fn(),
       createKeyConfirmEmail: jest.fn(),
-      prisma: jest.fn()
+      prisma: jest.fn(),
+      createToken: jest.fn().mockImplementation((userId) => {
+        return `${userId}$${process.env.JWT_SECRET}`
+      })
     } as unknown as KeyService;
 
     const userServiceMock = {
