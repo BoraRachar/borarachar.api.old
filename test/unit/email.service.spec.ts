@@ -6,7 +6,6 @@ import { User } from '@prisma/client';
 
 describe("Email Service Test", () => {
     let emailService: EmailService;
-    let mailerService: MailerService;
 
     const user: User = {
         email: "angelina@gmail.com",
@@ -14,14 +13,22 @@ describe("Email Service Test", () => {
         id: '',
         socialId: '',
         provider: '',
-        nome: '',
-        sobreNome: '',
+        nome: 'any-name',
+        sobreNome: 'any-lastname',
         cpf: '',
         termos: false,
         validateUser: false,
         createdAt: undefined,
         updatedAt: undefined
     }
+
+    const emailQueueMock = {
+      add: jest.fn().mockImplementation((jobName, jobData, jobOptions) => {
+        return {
+          isCompleted: jest.fn().mockResolvedValue({})
+        }
+      })
+    };
 
     const key = 'test_key';
 
@@ -48,29 +55,37 @@ describe("Email Service Test", () => {
               }),
             },
           },
+          {
+            provide: 'BullQueue_email',
+            useValue: emailQueueMock
+          }
         ],
       }).compile();
-  
+
+      emailQueueMock.add.mockClear();
+
       emailService = module.get<EmailService>(EmailService);
-      mailerService = module.get<MailerService>(MailerService);
     });
-    
+
 
     describe("SendEmail deliver", () => {
-        it("Should send the welcome email to the user", async () => {
+        it("SUCCESS - should add emailJob to the queue", async () => {
+
+            const confirmUrl = `${process.env.HOST}/user/confirmEmail/${key}`
+            const nome =
+            user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
 
             await emailService.sendEmailBoasVindas(user, key);
 
-            expect(mailerService.sendMail).toHaveBeenCalledWith({
-                to: user.email,
-                subject: 'Bem Vindo ao Bora Rachar! Confirme seu email',
-                template: expect.any(String),
-                context: {
-                  nome: `${user.nome} ${user.sobreNome}`,
-                  confirmUrl: expect.any(String),
-                },
-              })
-
+            expect(emailQueueMock.add).toHaveBeenCalledWith(
+              "email-job",
+              {
+              email: user.email,
+              nome: nome,
+              url:confirmUrl
+              },
+              { priority: 2, delay: 3000, lifo: true }
+            )
             });
     });
 
