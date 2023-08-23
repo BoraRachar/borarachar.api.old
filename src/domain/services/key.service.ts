@@ -7,7 +7,7 @@ import {
   TypeKeys,
   Validade,
   daysValidKeys,
-} from "src/common/constants/key,default";
+} from "../../common/constants/key.default";
 
 @Injectable()
 export class KeyService {

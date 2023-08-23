@@ -233,16 +233,28 @@ describe('Complete signup DTO test suite', () => {
       expect(stringField(errrors)).not.toContain(CompleteSignupErrors.CPF_LENGTH);
     })
 
-    it("ERROR - should throw if lastName is not a string", async () => {
+    it("ERROR - should throw if cpf is not valid", async () => {
 
       const data = {
-        cpf: 12345678912,
+        cpf: "12345678912",
       };
 
       const completeSignUp = plainToInstance(CompleteSignUpDTO, data);
       const errrors = await validate(completeSignUp);
 
-      expect(stringField(errrors)).toContain(CompleteSignupErrors.CPF_IS_STRING);
+      expect(stringField(errrors)).toContain(CompleteSignupErrors.CPF_IS_INVALID);
+    })
+
+    it("SUCCESS - should not throw if cpf is valid", async () => {
+
+      const data = {
+        cpf: "29452157054",
+      };
+
+      const completeSignUp = plainToInstance(CompleteSignUpDTO, data);
+      const errrors = await validate(completeSignUp);
+
+      expect(stringField(errrors)).not.toContain(CompleteSignupErrors.CPF_IS_INVALID);
     })
   });
 
