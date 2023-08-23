@@ -14,13 +14,14 @@ async function main() {
   admin.sobreNome = "ADM";
   admin.termos = true;
 
-  console.info(admin)
-
   let user = await prisma.user.findUnique({
     where: { email: admin.email }
   })
+
+  console.info("User: ", user != null ? user.id : 'Não Criado');
+
   if (user == null) {
-    let result = await  prisma.user.create({data : admin});
+    await  prisma.user.create({data : admin});
   }
 }
 
