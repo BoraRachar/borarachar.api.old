@@ -9,9 +9,22 @@ import { LoggerModule } from "./logger.module";
 import { ConfigModule } from "@nestjs/config";
 import config from "src/common/constants/configs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { BullModule } from "@nestjs/bull";
 
 @Module({
   imports: [
+    BullModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>("REDIS_HOST"),
+          port: configService.get<number>("REDIS_PORT"),
+          keyPrefix: configService.get<string>("REDIS_PREFIX"),
+          password: configService.get<string>("REDIS_PASS"),
+        },
+      }),
+      inject: [ConfigService],
+    }),
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     LoggerModule,
     PrismaModule.forRootAsync({

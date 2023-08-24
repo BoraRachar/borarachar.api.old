@@ -8,12 +8,19 @@ import {
   Post,
   Put,
   Res,
+  Redirect,
 } from "@nestjs/common";
-import { Redirect } from "@nestjsplus/redirect";
 import { CreateUserDto } from "../../domain/dto/create-user.dto";
 import { UserService } from "../../domain/services/user.service";
 import { Response } from "express";
-import { ApiCreatedResponse, ApiForbiddenResponse, ApiTags, ApiUnprocessableEntityResponse } from "@nestjs/swagger";
+import {
+  ApiAcceptedResponse,
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { KeyService } from "../../domain/services/key.service";
 import { CompleteSignUpDTO } from "../../domain/dto/complete-signup.dto";
 
@@ -43,14 +50,15 @@ export class UserController {
   async confirmUser(@Param("key") key: string, @Res() response: Response) {
     const existingKey = await this.keyService.confirmEmailCadastro(key);
     if (existingKey) {
-      const token = `${existingKey.userId}$${process.env.JWT_SECRET}`;
+      const token = await this.keyService.createToken(existingKey.userId);
+      console.info("ConfirmToken: ", token);
 
-      const url = `www.borarachar.online/register/complete/${token}`;
+      const url = `http://borarachar.online/register/complete/${token}`;
 
-      return { statusCode: HttpStatus.ACCEPTED, url };
+      return response.redirect(url);
     } else {
-      const url = `www.borarachar.online`;
-      return { statusCode: HttpStatus.FOUND, url };
+      const url = `http://borarachar.online`;
+      return response.redirect(url);
     }
   }
 
@@ -83,11 +91,33 @@ export class UserController {
   async completeSignUp(
     @Param("userId") userId: string,
     @Body() data: CompleteSignUpDTO,
+    @Res() response: Response,
   ) {
     await this.userService.completeSignUp(userId, data);
 
-    const url = `www.borarachar.online/register/successfully`;
+    const url = `http://borarachar.online/register/successfully`;
 
-    return { statusCode: HttpStatus.CREATED, url };
+    return response.redirect(url);
+  }
+
+  @Post("resendEmail/:email")
+  @ApiAcceptedResponse({ description: "Sucesso" })
+  @ApiBadRequestResponse({ description: "Falha no envio" })
+  @ApiForbiddenResponse({ description: "Não Autorizado" })
+  async resendEmail(@Param("email") email: string, @Res() response: Response) {
+    const resend = await this.userService.validUser(email);
+
+    if (resend) {
+      return response.status(HttpStatus.ACCEPTED).json({
+        statusCode: HttpStatus.ACCEPTED,
+        mensagem: "Email enviado com sucesso",
+      });
+    } else {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        mensagem:
+          "Houve um erro ao tentar envia o email. Tente novamente mais tarde!",
+      });
+    }
   }
 }

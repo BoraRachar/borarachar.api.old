@@ -9,7 +9,7 @@ export class PrismaConfigService implements PrismaOptionsFactory {
   createPrismaOptions(): PrismaServiceOptions | Promise<PrismaServiceOptions> {
     return {
       prismaOptions: {
-        log: ["info", "query"],
+        log: ["query", "info"],
       },
       explicitConnect: true,
       middlewares: [],

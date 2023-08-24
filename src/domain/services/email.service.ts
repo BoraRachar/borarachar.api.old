@@ -1,28 +1,35 @@
-import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
-import { join } from "path";
+import { InjectQueue } from "@nestjs/bull";
+import { Queue } from "bull";
 
 @Injectable()
 export class EmailService {
-  constructor(private mailService: MailerService) {}
+  constructor(@InjectQueue("email") private readonly emailQueue: Queue) {}
 
   async sendEmailBoasVindas(user: User, key: string) {
-    const confirmUrl = `${process.env.HOST}/v1/user/confirmEmail/${key}`;
+    console.info("Start Send Email");
+    const confirmUrl = `${process.env.HOST}/user/confirmEmail/${key}`;
+    console.info("Url: ", confirmUrl);
 
     const nome =
       user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
 
-    const sendEmail = await this.mailService.sendMail({
-      to: user.email,
-      subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
-      template: join(__dirname, "../../common/templates", "bemvindo"),
-      context: {
-        nome,
-        confirmUrl,
-      },
-    });
+    console.info("Nome: ", nome);
 
-    console.log("SendEmail: ", JSON.stringify(sendEmail));
+    const queue = await this.emailQueue.add(
+      "email-job",
+      {
+        email: user.email,
+        nome: nome,
+        url: confirmUrl,
+      },
+      { priority: 2, delay: 3000, lifo: true },
+    );
+
+    const isCompleted = await queue.isCompleted();
+    console.info("Queue status: ", isCompleted);
+
+    return isCompleted;
   }
 }

@@ -3,22 +3,28 @@ import { Global, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { EjsAdapter } from "@nestjs-modules/mailer/dist/adapters/ejs.adapter";
 import { EmailService } from "src/domain/services/email.service";
+import { BullModule } from "@nestjs/bull";
+import { EmailConsumer } from "../consumers/email.consumer";
+import { join } from "path";
 
 @Global()
 @Module({
   imports: [
+    BullModule.registerQueue({
+      name: "email",
+      processors: [join(__dirname, "../processors/bull.js")],
+    }),
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({
         transport: {
           host: config.get<string>("SMTP_HOST"),
-          secure: false,
           auth: {
             user: config.get<string>("SMTP_USER"),
             pass: config.get<string>("SMTP_KEY"),
           },
         },
         defaults: {
-          from: "Bora Rachar! noreply@borarachar.online",
+          from: "suporte.borarachar@gmail.com",
         },
         template: {
           dir: "../../common/templates",
@@ -31,7 +37,7 @@ import { EmailService } from "src/domain/services/email.service";
       inject: [ConfigService],
     }),
   ],
-  providers: [EmailService],
+  providers: [EmailService, EmailConsumer],
   exports: [EmailService],
 })
 export class EmailModule {}

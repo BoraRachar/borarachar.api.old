@@ -3,4 +3,5 @@ export interface Key {
   value: string;
   validate: Date;
   expiresIn: number;
+  type: string;
 }

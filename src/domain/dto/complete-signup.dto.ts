@@ -10,7 +10,7 @@ import {
   MinLength,
 } from "class-validator";
 import { IsTrue } from "../decorators/isTrue.decorator";
-import { CompleteSignupErrors } from '../enum/complete-signup-errors.enum';
+import { CompleteSignupErrors } from "../enum/complete-signup-errors.enum";
 
 export class CompleteSignUpDTO {
   @ApiProperty({
@@ -37,18 +37,17 @@ export class CompleteSignUpDTO {
     type: String,
     description: "CPF é obrigatório.",
   })
-  //@IsCPF({ message: "CPF Invalido" })
+  @IsCPF({ message: CompleteSignupErrors.CPF_IS_INVALID })
   @IsNotEmpty({ message: CompleteSignupErrors.CPF_REQUIRED })
   @Length(11, 11, { message: CompleteSignupErrors.CPF_LENGTH })
-  @IsNumberString({}, {message: CompleteSignupErrors.CPF_IS_STRING}) // corrigir ou colocar validate
   cpf: string;
 
   @ApiProperty({
     type: Boolean,
     description: "Termos são obrigatórios.",
   })
-  @IsNotEmpty({message: CompleteSignupErrors.TERMS_REQUIRED})
-  @IsBoolean({message: CompleteSignupErrors.TERMS_BOOLEAN})
+  @IsNotEmpty({ message: CompleteSignupErrors.TERMS_REQUIRED })
+  @IsBoolean({ message: CompleteSignupErrors.TERMS_BOOLEAN })
   @IsTrue("termos", { message: CompleteSignupErrors.TERMS_ARE_TRUE })
   termos: boolean;
 }

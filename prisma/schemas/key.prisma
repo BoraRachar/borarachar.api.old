@@ -6,6 +6,7 @@ model Key {
   validate  DateTime
   expiresIn Int
   status    Boolean  @default(true)
+  type      TypeKey  @default(Cadastro)
 
   @@map("keys")
 }
@@ -13,4 +14,10 @@ model Key {
 model User {
   id   String @id
   keys Key[]
+}
+
+enum TypeKey {
+  Cadastro
+  RecuperarSenha
+  ResendEmailConfirmar
 }

@@ -1,8 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { CreateUserDto } from "../../src/domain/dto/create-user.dto";
 import * as process from "process";
 import { encryptPass } from "../../src/domain/core/hashPassword";
-import { UserDto } from "src/domain/dto/user.dto";
+import { UserDto } from "../../src/domain/dto/user.dto";
 
 const prisma = new PrismaClient()
 
@@ -18,8 +17,11 @@ async function main() {
   let user = await prisma.user.findUnique({
     where: { email: admin.email }
   })
+
+  console.info("User: ", user != null ? user.id : 'Não Criado');
+
   if (user == null) {
-    let result = await  prisma.user.create({data : admin});
+    await  prisma.user.create({data : admin});
   }
 }
 

@@ -12,8 +12,9 @@ export enum CompleteSignupErrors {
   CPF_REQUIRED = "CPF não pode ser vazio.",
   CPF_LENGTH = "CPF deve conter exatamente 11 caracteres.",
   CPF_IS_STRING = "CPF deve ser uma string.",
+  CPF_IS_INVALID = "CPF Inválido.",
 
   TERMS_REQUIRED = "Termos não podem ser vazios.",
   TERMS_BOOLEAN = "Termos deve ser um boolean.",
-  TERMS_ARE_TRUE = "Termos devem ser aceitos."
+  TERMS_ARE_TRUE = "Termos devem ser aceitos.",
 }

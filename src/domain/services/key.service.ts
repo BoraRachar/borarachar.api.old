@@ -1,26 +1,48 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { User } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
-import { Key } from "../entities/interfaces/key.interface";
 import { PrismaService } from "./prisma.service";
 import { compareDates } from "../core/dates";
+import {
+  TypeKeys,
+  Validade,
+  daysValidKeys,
+} from "../../common/constants/key.default";
 
 @Injectable()
 export class KeyService {
   constructor(private prisma: PrismaService) {}
 
+  async createKey(user: User, type: TypeKeys) {
+    const key = await this.prisma.key.create({
+      data: {
+        userId: user.id,
+        value: uuidv4(),
+        validate: Validade(),
+        expiresIn: daysValidKeys,
+        type: type,
+      },
+    });
+    return key;
+  }
+
+  async createToken(userId: string) {
+    return `${userId}$${process.env.JWT_SECRET}`;
+  }
+
   async createKeyConfirmEmail(user: User) {
     const days = 2;
     const validate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
-    const data: Key = {
-      userId: user.id,
-      value: uuidv4(),
-      validate: validate,
-      expiresIn: days,
-    };
-
-    const key = await this.prisma.key.create({ data });
+    const key = await this.prisma.key.create({
+      data: {
+        userId: user.id,
+        value: uuidv4(),
+        validate: validate,
+        expiresIn: days,
+        type: "Cadastro",
+      },
+    });
     return key;
   }
 

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
+  "type": "commonjs",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -36,6 +37,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.7.1",
+    "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^9.0.0",
@@ -45,7 +47,8 @@
     "@nestjs/swagger": "^6.3.0",
     "@nestjsplus/redirect": "^1.0.0",
     "@prisma/client": "^5.1.1",
-    "bcrypt": "^5.1.0",
+    "bcrypt-nodejs": "^0.0.3",
+    "bull": "^4.11.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "class-validator-cpf": "^1.1.1",
@@ -114,15 +117,16 @@
       "json",
       "ts"
     ],
-    "rootDir": "test",
-    "testRegex": ".*\\.spec\\.ts$",
+    "rootDir": ".",
+    "testRegex": "test/.*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "**/*.(t|j)s"
+      "src/**/*.(t|j)s",
+      "!src/**/*demo*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "./coverage",
     "testEnvironment": "node",
     "verbose": true
   },
