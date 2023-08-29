@@ -153,7 +153,7 @@ export class UserService {
       where: { id: userId },
       data: {
         ...data,
-        updatedAt: Date(),
+        updatedAt: new Date().toISOString(),
       },
     });
 
