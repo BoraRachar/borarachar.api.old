@@ -1,5 +1,5 @@
 import { Injectable, LoggerService } from "@nestjs/common";
-import * as moment from "moment";
+import moment from "moment";
 import { MESSAGE } from "triple-beam";
 import * as winston from "winston";
 import { isLogLevel, LogLevel } from "../constants/loglevel.default";

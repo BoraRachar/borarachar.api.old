@@ -11,9 +11,13 @@ import config from "src/common/constants/configs/config";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { BullModule } from "@nestjs/bull";
+import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 
 @Module({
   imports: [
+    PrometheusModule.register({
+      path: "/metrics",
+    }),
     BullModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         redis: {

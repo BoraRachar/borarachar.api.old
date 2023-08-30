@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
-import * as moment from "moment";
+import moment from "moment";
 import { Logger } from "../../common/helper/logger";
 import { Injectable, NestMiddleware } from "@nestjs/common";
 
