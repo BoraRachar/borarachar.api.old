@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { plainToInstance } from "class-transformer";
 import { validate, Length } from "class-validator";
 import { stringField } from "../../../src/common/helper/stringField.helper";
@@ -36,7 +37,7 @@ describe("Create user DTO test suite", () => {
     const createUserDTO = plainToInstance(CreateUserDto, data);
     const errors = await validate(createUserDTO);
 
-    expect(stringField(errors)).toContain(CreateUserErrors.PASSWORD_REQUIRED);
+    expect(stringField(errors)).toContain(CreateUserErrors.PASSWORD_MIN_REQUIREMENTS);
   });
 
   test("SUCCESS - should not throw if password is provided", async () => {
@@ -49,7 +50,7 @@ describe("Create user DTO test suite", () => {
     const errors = await validate(createUserDTO);
 
     expect(stringField(errors)).not.toContain(
-      CreateUserErrors.PASSWORD_REQUIRED,
+      CreateUserErrors.PASSWORD_MIN_REQUIREMENTS,
     );
   });
 
@@ -62,7 +63,7 @@ describe("Create user DTO test suite", () => {
     const errors = await validate(createUserDTO);
 
     expect(stringField(errors)).toContain(
-      CreateUserErrors.CONFIRM_PASSWORD_REQUIRED,
+      CreateUserErrors.PASSWORDS_MATCH,
     );
   });
 
@@ -76,7 +77,7 @@ describe("Create user DTO test suite", () => {
     const errors = await validate(createUserDTO);
 
     expect(stringField(errors)).not.toContain(
-      CreateUserErrors.CONFIRM_PASSWORD_REQUIRED,
+      CreateUserErrors.PASSWORDS_MATCH,
     );
   });
 
