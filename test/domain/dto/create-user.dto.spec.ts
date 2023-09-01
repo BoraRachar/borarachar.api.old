@@ -50,7 +50,7 @@ describe("Create user DTO test suite", () => {
     const errors = await validate(createUserDTO);
 
     expect(stringField(errors)).not.toContain(
-      CreateUserErrors.PASSWORD_MIN_REQUIREMENTS,
+      CreateUserErrors.PASSWORDS_MATCH,
     );
   });
 
