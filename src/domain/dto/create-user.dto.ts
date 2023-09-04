@@ -12,19 +12,19 @@ import { CreateUserErrors } from '../enum/create-user-errors.enum.spec';
 export class CreateUserDto {
   @ApiProperty({
     type: String,
-    description: "Email é obrigatório",
+    description: "O email é obrigatório",
   })
   @IsNotEmpty({ message: CreateUserErrors.EMAIL_REQUIRED })
-  @IsEmail({}, {message: "Formato de email nao válido."})
+  @IsEmail({}, {message: "O email informado nao válido."})
   email: string;
 
   @ApiProperty({
     type: String,
-    description: "Senha é obrigatória",
+    description: "A senha é obrigatória",
   })
   @IsString()
-  @MinLength(8, { message: "Deve ter no mínimo 8 caracteres" })
-  @IsNotEmpty({ message: CreateUserErrors.PASSWORD_REQUIRED })
+  @MinLength(8, { message: "A senha deve possuir no mínimo 8 caracteres, contendo pelo menos 1 letra maiúscula, uma letra minúscula e um caractere especial (Ex.: #, $, *, @)" })
+  @IsNotEmpty({ message: CreateUserErrors.PASSWORD_MIN_REQUIREMENTS })
   @IsStrongPassword(
     {
       minLength: 8,
@@ -38,6 +38,7 @@ export class CreateUserDto {
     },
   )
   password: string;
+
   @ApiProperty({
     type: String,
     description: "Confirmar Senha é obrigatória",
@@ -47,6 +48,6 @@ export class CreateUserDto {
   @Match("password", {
     message: CreateUserErrors.PASSWORDS_MATCH,
   })
-  @IsNotEmpty({ message: CreateUserErrors.CONFIRM_PASSWORD_REQUIRED })
+  @IsNotEmpty({ message: CreateUserErrors.PASSWORD_MIN_REQUIREMENTS })
   confirmPassword: string;
 }
