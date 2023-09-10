@@ -22,6 +22,16 @@ async function main() {
 
   if (user == null) {
     await  prisma.user.create({data : admin});
+
+    await prisma.user.update({
+      where: {
+        email: admin.email,
+      },
+      data: {
+        validateUser: true,
+      }
+    });
+
   }
 }
 

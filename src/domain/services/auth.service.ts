@@ -4,7 +4,6 @@ import { comparePass } from "../core/hashPassword";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Login, Token } from "../entities/interfaces/login.interface";
-import { KeyService } from "./key.service";
 
 @Injectable()
 export class AuthService {
@@ -12,7 +11,6 @@ export class AuthService {
     private prisma: PrismaService,
     private configService: ConfigService,
     private jwtService: JwtService,
-    private keyService: KeyService,
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -40,13 +38,6 @@ export class AuthService {
       where: { email },
     });
 
-    //const key = await this.keyService.find(user.id);
-
-    const now = Date.now();
-
-    // compareDates()
-    // 1 (gera nova key, enviar novo email)
-
     if (user.validateUser == false) {
       throw new HttpException(
         "Verificar email de confirmação",
@@ -55,6 +46,7 @@ export class AuthService {
     }
 
     const payload = { sub: email, subject: user.id };
+
     const config = {
       secret: this.configService.get<string>("JWT_SECRET"),
       expiresIn: "1day",

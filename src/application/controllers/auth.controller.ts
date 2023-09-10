@@ -28,6 +28,7 @@ export class AuthController {
 
       response.status(HttpStatus.OK).json(login);
     } catch (error) {
+      console.info("Login Error:", error);
       if (error) {
         throw new HttpException(
           "Hove um erro! ",
