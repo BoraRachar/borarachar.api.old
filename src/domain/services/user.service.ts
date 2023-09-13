@@ -5,7 +5,7 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
-import { TypeKeys } from "../../common/constants/key.default";
+import { TypeKeys, defaultCpf } from "../../common/constants/key.default";
 
 @Injectable()
 export class UserService {
@@ -99,7 +99,7 @@ export class UserService {
     }
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<JsonObject> {
+  async createUser(data): Promise<JsonObject> {
     const exist = await this.prisma.user.findUnique({
       where: {
         email: data.email,
@@ -115,6 +115,7 @@ export class UserService {
     const user = await this.prisma.user.create({
       data: {
         email: data.email,
+        cpf: defaultCpf,
         password: await encryptPass(data.password),
       },
     });
@@ -145,6 +146,13 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
+
+    const existCpf = await this.prisma
+      .$queryRaw`SELECT * FROM users WHERE cpf = ${data.cpf}`;
+
+    if (existCpf[0] != null) {
+      throw new HttpException("CPF já Cadastrado", HttpStatus.BAD_REQUEST);
+    }
 
     if (!user)
       throw new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND);

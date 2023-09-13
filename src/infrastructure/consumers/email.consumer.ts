@@ -18,6 +18,7 @@ export class EmailConsumer {
     this.mailService
       .sendMail({
         to: email,
+        from: "suporte.borarachar@gmail.com",
         subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
         template: join(__dirname, "../../common/templates", "bemvindo"),
         context: {
