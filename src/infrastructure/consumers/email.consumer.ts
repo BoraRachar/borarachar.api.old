@@ -8,7 +8,7 @@ export class EmailConsumer {
   constructor(private readonly mailService: MailerService) {}
 
   @Process("email-job")
-  handleSendEmail(job: Job) {
+  async handleSendEmail(job: Job) {
     console.info("Send Email Queue Start");
 
     const { email, nome, url } = job.data;
