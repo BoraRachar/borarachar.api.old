@@ -159,4 +159,16 @@ export class UserService {
 
     return updatedUser;
   }
+
+  async recoverPassword(email: Prisma.UserWhereUniqueInput){
+    const userExists = await this.findOneUserbyEmail(email);
+
+    console.info("userExists: ", userExists ? userExists.id : "Não encontrado")
+
+    if(!userExists) throw new HttpException("Usuário não cadastrado", HttpStatus.BAD_REQUEST);
+
+    const key = await this.keyService.createKeyForgotPassword(userExists);
+
+  }
+
 }
