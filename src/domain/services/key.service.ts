@@ -98,4 +98,21 @@ export class KeyService {
       throw new HttpException("Chave expirada", HttpStatus.BAD_REQUEST);
     }
   }
+
+  async createKeyForgotPassword(user: User) {
+    const days = 1;
+    const validate = new Date(Date.now() + days * 60 * 60 * 1000)
+
+    const key = await this.prisma.key.create({
+      data: {
+        userId: user.id,
+        value: uuidv4(),
+        validate: validate,
+        expiresIn: days,
+        type: "RecuperarSenha"
+      }
+    });
+
+    return key;
+  }
 }
