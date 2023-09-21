@@ -32,4 +32,27 @@ export class EmailService {
 
     return isCompleted;
   }
+
+  async sendRecoverPasswordEmail(user: User, key: string) {
+
+    console.info("Start Sending Recover Password Email");
+    const recoverPasswordURL = `${process.env.HOST}/forgotPassword/confirmUpdatePassword/${key}`;
+    console.info("Url: ", recoverPasswordURL);
+
+    const userName = user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
+
+    console.info("Nome: ", userName);
+
+    const queue = await this.emailQueue.add(
+      "email-job",
+      {
+        email: user.email,
+        nome: userName,
+        url: recoverPasswordURL
+      },
+      {
+        
+      }
+    )
+  }
 }
