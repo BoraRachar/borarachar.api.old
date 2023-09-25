@@ -5,7 +5,7 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
-import { TypeKeys } from "../../common/constants/key.default";
+import { TypeKeys, defaultCpf } from "../../common/constants/key.default";
 
 @Injectable()
 export class UserService {
@@ -40,13 +40,21 @@ export class UserService {
   }
 
   async socialUserCreate(data: Prisma.UserCreateInput): Promise<User> {
-    const user = await this.prisma.user.create({ data });
+    const existUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
 
-    const key = await this.keyService.createKeyConfirmEmail(user);
+    if (existUser == null) {
+      const user = await this.prisma.user.create({ data });
 
-    await this.emailService.sendEmailBoasVindas(user, key.value);
+      const key = await this.keyService.createKeyConfirmEmail(user);
 
-    return user;
+      await this.emailService.sendEmailBoasVindas(user, key.value);
+
+      return user;
+    } else {
+      return existUser;
+    }
   }
 
   async validUser(email) {
@@ -99,14 +107,12 @@ export class UserService {
     }
   }
 
-  async createUser(data: Prisma.UserCreateInput): Promise<JsonObject> {
+  async createUser(data): Promise<JsonObject> {
     const exist = await this.prisma.user.findUnique({
       where: {
         email: data.email,
       },
     });
-
-    console.info("ExistsUser: ", exist != null ? exist.id : "Não cadastrado");
 
     if (exist != null) {
       throw new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST);
@@ -119,8 +125,6 @@ export class UserService {
       },
     });
 
-    console.info("CreateUser: ", user.id);
-
     const key = await this.keyService.createKeyConfirmEmail(user);
 
     await this.emailService.sendEmailBoasVindas(user, key.value);
@@ -129,12 +133,13 @@ export class UserService {
       return {
         statusCode: 201,
         message: "Usuario criado com sucesso",
+        url: `${process.env.HOST}/user/confirmEmail/${key.value}`,
       };
     } else {
-      return {
-        statusCode: 400,
-        message: "Falha ao criar o usuario",
-      };
+      throw new HttpException(
+        "Falha ao criar o usuario.",
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -145,6 +150,13 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
+
+    const existCpf = await this.prisma
+      .$queryRaw`SELECT * FROM users WHERE cpf = ${data.cpf}`;
+
+    if (existCpf[0] != null) {
+      throw new HttpException("CPF já Cadastrado", HttpStatus.BAD_REQUEST);
+    }
 
     if (!user)
       throw new HttpException("Usuário não encontrado", HttpStatus.NOT_FOUND);

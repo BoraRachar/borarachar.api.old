@@ -10,9 +10,8 @@ import { join } from "path";
 @Global()
 @Module({
   imports: [
-    BullModule.registerQueue({
+    BullModule.registerQueueAsync({
       name: "email",
-      processors: [join(__dirname, "../processors/bull.js")],
     }),
     MailerModule.forRootAsync({
       useFactory: async (config: ConfigService) => ({

@@ -29,7 +29,6 @@ export class EmailService {
 
     const isCompleted = await queue.isCompleted();
     console.info("Queue status: ", isCompleted);
-
     return isCompleted;
   }
 }

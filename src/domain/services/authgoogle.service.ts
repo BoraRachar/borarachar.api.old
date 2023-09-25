@@ -6,16 +6,12 @@ import { Login, Token } from "../entities/interfaces/login.interface";
 import { JwtService } from "@nestjs/jwt";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { EmailService } from "./email.service";
-import { KeyService } from "./key.service";
 
 @Injectable()
 export class AuthGoogleService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-    private emailService: EmailService,
-    private keyService: KeyService,
     private configService: ConfigService,
   ) {}
 

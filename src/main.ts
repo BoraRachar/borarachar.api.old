@@ -14,7 +14,7 @@ const NEST_LOGGING = false;
 async function bootstrap() {
   const opts: NestApplicationOptions = {};
   if (!NEST_LOGGING) {
-    opts.logger = false;
+    opts.logger = NEST_LOGGING;
   }
 
   const app = await NestFactory.create(AppModule);
