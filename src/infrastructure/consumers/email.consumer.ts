@@ -43,22 +43,23 @@ export class EmailConsumer {
 
     console.info("Dados email: ", JSON.stringify(job.data));
 
-    this.mailService.sendMail({
-      to: email,
-      subject: "Recuperar Senha - Bora Rachar",
-      template: join(__dirname, "../../common/templates", "recupereSenha"),
-      context: {
-        nome,
-        recoverPasswordUrl: url,
-      },
-    })
-    .then((s) => {
-      console.info("SendEmailRecoverPassword success: ", JSON.stringify(s))
-    })
-    .catch((error) => {
-      console.info("SendEmailRecoverPassword error: ", JSON.stringify(error))
-    });
+    this.mailService
+      .sendMail({
+        to: email,
+        subject: "Recuperar Senha - Bora Rachar",
+        template: join(__dirname, "../../common/templates", "recupereSenha"),
+        context: {
+          nome,
+          recoverPasswordUrl: url,
+        },
+      })
+      .then((s) => {
+        console.info("SendEmailRecoverPassword success: ", JSON.stringify(s));
+      })
+      .catch((error) => {
+        console.info("SendEmailRecoverPassword error: ", JSON.stringify(error));
+      });
 
-    console.info("SendEmailRecoverPassword Queue Complete")
+    console.info("SendEmailRecoverPassword Queue Complete");
   }
 }
