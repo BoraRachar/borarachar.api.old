@@ -40,13 +40,21 @@ export class UserService {
   }
 
   async socialUserCreate(data: Prisma.UserCreateInput): Promise<User> {
-    const user = await this.prisma.user.create({ data });
+    const existUser = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
 
-    const key = await this.keyService.createKeyConfirmEmail(user);
+    if (existUser == null) {
+      const user = await this.prisma.user.create({ data });
 
-    await this.emailService.sendEmailBoasVindas(user, key.value);
+      const key = await this.keyService.createKeyConfirmEmail(user);
 
-    return user;
+      await this.emailService.sendEmailBoasVindas(user, key.value);
+
+      return user;
+    } else {
+      return existUser;
+    }
   }
 
   async validUser(email) {
@@ -106,8 +114,6 @@ export class UserService {
       },
     });
 
-    console.info("ExistsUser: ", exist != null ? exist.id : "Não cadastrado");
-
     if (exist != null) {
       throw new HttpException("Usuario já Cadastrado ", HttpStatus.BAD_REQUEST);
     }
@@ -118,8 +124,6 @@ export class UserService {
         password: await encryptPass(data.password),
       },
     });
-
-    console.info("CreateUser: ", user.id);
 
     const key = await this.keyService.createKeyConfirmEmail(user);
 
@@ -132,10 +136,10 @@ export class UserService {
         url: `${process.env.HOST}/user/confirmEmail/${key.value}`,
       };
     } else {
-      return {
-        statusCode: 400,
-        message: "Falha ao criar o usuario",
-      };
+      throw new HttpException(
+        "Falha ao criar o usuario.",
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 

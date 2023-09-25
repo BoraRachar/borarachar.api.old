@@ -38,6 +38,8 @@ export class AuthService {
       where: { email },
     });
 
+    console.info("User Login: ", user);
+
     const payload = { sub: email, subject: user.id };
 
     const config = {
