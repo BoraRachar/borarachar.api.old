@@ -160,15 +160,26 @@ export class UserService {
     return updatedUser;
   }
 
-  async recoverPassword(email: Prisma.UserWhereUniqueInput){
-    const userExists = await this.findOneUserbyEmail(email);
+  async recoverPassword(email: string){
+
+    const userExists = await this.prisma.user.findUnique({
+      where: { email }
+    });
 
     console.info("userExists: ", userExists ? userExists.id : "Não encontrado")
 
-    if(!userExists) throw new HttpException("Usuário não cadastrado", HttpStatus.BAD_REQUEST);
+    if(!userExists) throw new HttpException("", HttpStatus.BAD_REQUEST);
 
-    const key = await this.keyService.createKeyForgotPassword(userExists);
+    const EmailWasSent = await this.emailService.sendRecoverPasswordEmail(userExists, email);
 
+    if(EmailWasSent){
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: "Email de recuperação enviado!"
+      }
+    } else {
+      throw new HttpException("Falha ao enviar email de recuperação de senha", HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
 }

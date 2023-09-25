@@ -33,11 +33,11 @@ export class EmailService {
     return isCompleted;
   }
 
-  async sendRecoverPasswordEmail(user: User, key: string) {
+  async sendRecoverPasswordEmail(user: User, email: string) {
 
     console.info("Start Sending Recover Password Email");
-    const recoverPasswordURL = `${process.env.HOST}/forgotPassword/confirmUpdatePassword/${key}`;
-    console.info("Url: ", recoverPasswordURL);
+    const recoverPasswordUrl = `${process.env.HOST}/recoverPassword/new-password/${email}`;
+    console.info("Url: ", recoverPasswordUrl);
 
     const userName = user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
 
@@ -48,11 +48,17 @@ export class EmailService {
       {
         email: user.email,
         nome: userName,
-        url: recoverPasswordURL
+        url: recoverPasswordUrl
       },
       {
-        
+        priority: 2, delay: 3000, lifo: true
       }
     )
+    const isCompleted = await queue.isCompleted();
+    console.info("Queue status: ", isCompleted);
+
+    return isCompleted;
   }
+
+
 }
