@@ -1,11 +1,15 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
+import { PrismaService } from "nestjs-prisma";
 import { join } from "path";
 
 @Processor("email")
 export class EmailConsumer {
-  constructor(private readonly mailService: MailerService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly mailService: MailerService,
+  ) {}
 
   @Process("email-job")
   handleSendEmail(job: Job) {
@@ -36,10 +40,21 @@ export class EmailConsumer {
   }
 
   @Process("recover-password-job")
-  handleSendRecoverPasswordEmail(job: Job) {
+  async handleSendRecoverPasswordEmail(job: Job) {
     console.info("Send Email Recover Password Queue Start");
 
     const { email, nome, url } = job.data;
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    const sendemail = await this.prisma
+      .$queryRaw`SELECT * FROM emails WHERE userId = ${user.id}`;
+
+    console.info("SendEmail: ", sendemail[0]);
 
     console.info("Dados email: ", JSON.stringify(job.data));
 
@@ -54,9 +69,13 @@ export class EmailConsumer {
         },
       })
       .then((s) => {
+        //Update enviado
+        //await this.prisma.email.update;
+
         console.info("SendEmailRecoverPassword success: ", JSON.stringify(s));
       })
       .catch((error) => {
+        // update error
         console.info("SendEmailRecoverPassword error: ", JSON.stringify(error));
       });
 

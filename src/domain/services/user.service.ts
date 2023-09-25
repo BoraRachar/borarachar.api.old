@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
-import { User, Prisma } from "@prisma/client";
+import { User, Prisma, TypeEmail } from "@prisma/client";
 import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
@@ -88,6 +88,14 @@ export class UserService {
 
       console.info("NewKey: ", newKey.value);
 
+      await this.prisma.email.create({
+        data: {
+          userId: user.id,
+          createdAt: Date.now().toLocaleString("pt-BR"),
+          type: TypeEmail.Cadastro,
+        },
+      });
+
       const send = await this.emailService.sendEmailBoasVindas(
         user,
         newKey.value,
@@ -160,26 +168,30 @@ export class UserService {
     return updatedUser;
   }
 
-  async recoverPassword(email: string){
-
+  async recoverPassword(email: string) {
     const userExists = await this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
-    console.info("userExists: ", userExists ? userExists.id : "Não encontrado")
+    console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
-    if(!userExists) throw new HttpException("", HttpStatus.BAD_REQUEST);
+    if (!userExists) throw new HttpException("", HttpStatus.BAD_REQUEST);
 
-    const EmailWasSent = await this.emailService.sendRecoverPasswordEmail(userExists, email);
+    const EmailWasSent = await this.emailService.sendRecoverPasswordEmail(
+      userExists,
+      email,
+    );
 
-    if(EmailWasSent){
+    if (EmailWasSent) {
       return {
         statusCode: HttpStatus.CREATED,
-        message: "Email de recuperação enviado!"
-      }
+        message: "Email de recuperação enviado!",
+      };
     } else {
-      throw new HttpException("Falha ao enviar email de recuperação de senha", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(
+        "Falha ao enviar email de recuperação de senha",
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
-
 }
