@@ -38,13 +38,6 @@ export class AuthService {
       where: { email },
     });
 
-    if (user.validateUser == false) {
-      throw new HttpException(
-        "Verificar email de confirmação",
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
     const payload = { sub: email, subject: user.id };
 
     const config = {
