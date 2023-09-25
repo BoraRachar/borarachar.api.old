@@ -20,4 +20,5 @@ enum TypeKey {
   Cadastro
   RecuperarSenha
   ResendEmailConfirmar
+  ReseteSenha
 }
