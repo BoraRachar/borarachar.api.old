@@ -99,7 +99,7 @@ export class UserService {
       await this.prisma.email.create({
         data: {
           userId: user.id,
-          createdAt: Date.now().toLocaleString("pt-BR"),
+          createdAt: now,
           type: TypeEmail.Cadastro,
         },
       });
