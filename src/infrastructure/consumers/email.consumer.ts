@@ -51,14 +51,9 @@ export class EmailConsumer {
       },
     });
 
-    const sendemail = await this.prisma
-      .$queryRaw`SELECT * FROM emails WHERE userId = ${user.id}`;
-
-    console.info("SendEmail: ", sendemail[0]);
-
     console.info("Dados email: ", JSON.stringify(job.data));
 
-    this.mailService
+    await this.mailService
       .sendMail({
         to: email,
         subject: "Recuperar Senha - Bora Rachar",
@@ -68,14 +63,10 @@ export class EmailConsumer {
           recoverPasswordUrl: url,
         },
       })
-      .then((s) => {
-        //Update enviado
-        //await this.prisma.email.update;
-
+      .then(async (s) => {
         console.info("SendEmailRecoverPassword success: ", JSON.stringify(s));
       })
       .catch((error) => {
-        // update error
         console.info("SendEmailRecoverPassword error: ", JSON.stringify(error));
       });
 

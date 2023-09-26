@@ -175,23 +175,17 @@ export class UserService {
 
     console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
-    if (!userExists) throw new HttpException("", HttpStatus.BAD_REQUEST);
+    if (!userExists || !userExists.validateUser) throw new HttpException("", HttpStatus.BAD_REQUEST);
 
-    const EmailWasSent = await this.emailService.sendRecoverPasswordEmail(
+    await this.emailService.sendRecoverPasswordEmail(
       userExists,
-      email,
+      email
     );
 
-    if (EmailWasSent) {
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: "Email de recuperação enviado!",
-      };
-    } else {
-      throw new HttpException(
-        "Falha ao enviar email de recuperação de senha",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "Email de recuperação enviado!",
+    };
+
   }
 }

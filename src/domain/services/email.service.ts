@@ -44,7 +44,7 @@ export class EmailService {
     console.info("Nome: ", userName);
 
     const queue = await this.emailQueue.add(
-      "email-job",
+      "recover-password-job",
       {
         email: user.email,
         nome: userName,
