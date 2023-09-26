@@ -173,7 +173,7 @@ export class UserService {
       where: { id: userId },
       data: {
         ...data,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       },
     });
 
@@ -188,7 +188,7 @@ export class UserService {
     console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
     if (!userExists || !userExists.validateUser)
-      throw new HttpException("", HttpStatus.BAD_REQUEST);
+      throw new HttpException("", HttpStatus.NOT_FOUND);
 
     await this.emailService.sendRecoverPasswordEmail(userExists, email);
 
