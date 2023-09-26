@@ -210,7 +210,7 @@ export class UserService {
 
       if(password != confirmPassword) throw new BadRequestException("As senhas inseridas não são iguais!");
 
-      const user = await this.prisma.user.update({
+      await this.prisma.user.update({
         where: {
           email: email
         },
@@ -219,8 +219,6 @@ export class UserService {
         }
       })
       ;
-
-      console.log(user);
 
       return {
         email,
