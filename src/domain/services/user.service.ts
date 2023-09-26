@@ -1,4 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+/* eslint-disable prettier/prettier */
+import { BadRequestException, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
 import { User, Prisma, TypeEmail } from "@prisma/client";
 import { EmailService } from "./email.service";
@@ -99,7 +100,7 @@ export class UserService {
       await this.prisma.email.create({
         data: {
           userId: user.id,
-          createdAt: Date.now().toLocaleString("pt-BR"),
+          createdAt: now,
           type: TypeEmail.Cadastro,
         },
       });
@@ -188,7 +189,7 @@ export class UserService {
     console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
     if (!userExists || !userExists.validateUser)
-      throw new HttpException("", HttpStatus.BAD_REQUEST);
+      throw new HttpException("", HttpStatus.NOT_FOUND);
 
     await this.emailService.sendRecoverPasswordEmail(userExists, email);
 
@@ -196,5 +197,35 @@ export class UserService {
       statusCode: HttpStatus.CREATED,
       message: "Email de recuperação enviado!",
     };
+  }
+
+  async resetPassword(email: string, password: string, confirmPassword: string) {
+      const userExists = await this.prisma.user.findUnique({
+        where: { email },
+      });
+
+      console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
+
+      if (!userExists || !userExists.validateUser) throw new HttpException("", HttpStatus.NOT_FOUND);
+
+      if(password != confirmPassword) throw new BadRequestException("As senhas inseridas não são iguais!");
+
+      const user = await this.prisma.user.update({
+        where: {
+          email: email
+        },
+        data: {
+          password: await encryptPass(password) 
+        }
+      })
+      ;
+
+      console.log(user);
+
+      return {
+        email,
+        statusCode: HttpStatus.OK,
+        message: "Sua senha foi redefinida com sucesso!",
+      };
   }
 }
