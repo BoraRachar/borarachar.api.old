@@ -11,15 +11,15 @@ import { CreateUserDto } from '../../domain/dto/create-user.dto';
 export class ForgotPasswordController {
   constructor(private readonly UserService: UserService) {}
 
-  // @Post("/:email")
-  // async sendForgotPasswordEmail(
-  //   @Param("email", ValidateEmailPipe) email: string,
-  //   @Res() response: Response,
-  // ) {
-  //   const sendEmail = await this.UserService.recoverPassword(email);
+  @Post("/:email")
+  async sendForgotPasswordEmail(
+    @Param("email", ValidateEmailPipe) email: string,
+    @Res() response: Response,
+  ) {
+    const sendEmail = await this.UserService.recoverPassword(email);
 
-  //   return response.status(HttpStatus.CREATED).json(sendEmail);
-  // }
+    return response.status(HttpStatus.CREATED).json(sendEmail);
+  }
 
   @Patch("/resetPassword") 
   async resetPassword(@Body() {email, password, confirmPassword }: CreateUserDto) {
