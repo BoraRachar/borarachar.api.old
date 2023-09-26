@@ -93,11 +93,19 @@ export class UserController {
     @Body() data: CompleteSignUpDTO,
     @Res() response: Response,
   ) {
-    await this.userService.completeSignUp(userId, data);
+    const status = await this.userService.completeSignUp(userId, data);
 
-    const url = `http://borarachar.online/register/successfully`;
-
-    return response.redirect(url);
+    if (status != null) {
+      return response.status(HttpStatus.OK).json({
+        statusCode: HttpStatus.OK,
+        mensagem: "Atualizado com sucesso.",
+      });
+    } else {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        mensagem: "Houve um erro ao tentar atualizar.",
+      });
+    }
   }
 
   @Post("resendEmail/:email")

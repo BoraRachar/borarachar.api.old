@@ -24,10 +24,12 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   async login(@Body() loginInfo: LoginInfoDto, @Res() response: Response) {
     try {
+      console.info("LoginRequest : ", loginInfo);
       const login = await this.authService.login(loginInfo.email);
 
       response.status(HttpStatus.OK).json(login);
     } catch (error) {
+      console.info("Login Error:", error);
       if (error) {
         throw new HttpException(
           "Hove um erro! ",

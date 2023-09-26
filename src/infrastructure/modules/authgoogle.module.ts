@@ -19,9 +19,8 @@ import { join } from "path";
 
 @Module({
   imports: [
-    BullModule.registerQueue({
+    BullModule.registerQueueAsync({
       name: "email",
-      processors: [join(__dirname, "../processors/bull.js")],
     }),
     PrismaModule,
     EmailModule,

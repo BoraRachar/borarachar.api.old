@@ -27,6 +27,7 @@ lerna-debug.log*
 *.launch
 .settings/
 *.sublime-workspace
+.syncignore
 
 # IDE - VSCode
 .vscode/*
@@ -35,8 +36,8 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# lock
-yarn.lock
+# log
+yarn-error.log
 
 # env
 .env

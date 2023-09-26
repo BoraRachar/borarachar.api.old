@@ -12,7 +12,7 @@ export class EmailConsumer {
   ) {}
 
   @Process("email-job")
-  handleSendEmail(job: Job) {
+  async handleSendEmail(job: Job) {
     console.info("Send Email Queue Start");
 
     const { email, nome, url } = job.data;
@@ -22,6 +22,7 @@ export class EmailConsumer {
     this.mailService
       .sendMail({
         to: email,
+        from: "suporte.borarachar@gmail.com",
         subject: "Bem Vindo ao Bora Rachar! Confirme seu email",
         template: join(__dirname, "../../common/templates", "bemvindo"),
         context: {
