@@ -98,4 +98,5 @@ export class KeyService {
       throw new HttpException("Chave expirada", HttpStatus.BAD_REQUEST);
     }
   }
+
 }

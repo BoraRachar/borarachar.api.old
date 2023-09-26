@@ -1,0 +1,21 @@
+model Email {
+  id        Int       @id @default(autoincrement())
+  User      User      @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime
+  type      TypeEmail @default(Cadastro)
+  send      Boolean   @default(false)
+
+  @@map("emails")
+}
+
+model User {
+  id     String  @id
+  emails Email[]
+}
+
+enum TypeEmail {
+  Cadastro
+  RecuperarSenha
+  ReseteSenha
+}

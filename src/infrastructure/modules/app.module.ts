@@ -12,6 +12,7 @@ import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { BullModule } from "@nestjs/bull";
 import { PrometheusModule } from "@willsoto/nestjs-prometheus";
+import { UserModule } from './user.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PrometheusModule } from "@willsoto/nestjs-prometheus";
     AuthGoogleModule,
     AuthInstagramModule,
     JwtModule,
+    UserModule
   ],
   controllers: [],
   providers: [AppService],

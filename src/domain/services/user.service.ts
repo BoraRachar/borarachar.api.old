@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
-import { User, Prisma } from "@prisma/client";
+import { User, Prisma, TypeEmail } from "@prisma/client";
 import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
@@ -96,6 +96,14 @@ export class UserService {
 
       console.info("NewKey: ", newKey.value);
 
+      await this.prisma.email.create({
+        data: {
+          userId: user.id,
+          createdAt: Date.now().toLocaleString("pt-BR"),
+          type: TypeEmail.Cadastro,
+        },
+      });
+
       const send = await this.emailService.sendEmailBoasVindas(
         user,
         newKey.value,
@@ -170,5 +178,23 @@ export class UserService {
     });
 
     return updatedUser;
+  }
+
+  async recoverPassword(email: string) {
+    const userExists = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
+
+    if (!userExists || !userExists.validateUser)
+      throw new HttpException("", HttpStatus.BAD_REQUEST);
+
+    await this.emailService.sendRecoverPasswordEmail(userExists, email);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "Email de recuperação enviado!",
+    };
   }
 }
