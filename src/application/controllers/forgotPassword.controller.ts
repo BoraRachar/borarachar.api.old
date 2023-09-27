@@ -1,17 +1,28 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Param, Post, HttpStatus, Res, Body, Patch } from '@nestjs/common';
+import { Controller, Param, Post, HttpStatus, Res, Body, Patch, Req, Put } from "@nestjs/common";
 import { UserService } from '../../domain/services/user.service';
 import { Response } from 'express';
 import { ValidateEmailPipe } from '../../domain/core/pipes/validate-email.pipe';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from "@nestjs/swagger";
 import { CreateUserDto } from '../../domain/dto/create-user.dto';
+import { ResetPasswordDto } from "../../domain/dto/reset-password.dto";
 
 @ApiTags("Password")
 @Controller("recoverPassword")
 export class ForgotPasswordController {
-  constructor(private readonly UserService: UserService) {}
+  constructor(private readonly UserService: UserService) {
+  }
 
   @Post("/:email")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
   async sendForgotPasswordEmail(
     @Param("email", ValidateEmailPipe) email: string,
     @Res() response: Response,
@@ -21,8 +32,13 @@ export class ForgotPasswordController {
     return response.status(HttpStatus.CREATED).json(sendEmail);
   }
 
-  @Patch("/resetPassword") 
-  async resetPassword(@Body() {email, password, confirmPassword }: CreateUserDto) {
-      return this.UserService.resetPassword(email, password, confirmPassword);
+  @Put("/resetPassword")
+  @ApiOkResponse({ description: "Success" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
+  async resetPassword(@Body() reset: ResetPasswordDto) {
+    console.info('Request: ', reset)
+    return await this.UserService.resetPassword(reset);
   }
+
 }
