@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import {
+  IS_EMAIL,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -9,7 +10,7 @@ import {
 import { Match } from "../decorators/match.decorator";
 import { CreateUserErrors } from "../enum/create-user-errors.enum.spec";
 
-export class CreateUserDto {
+export class ResetPasswordDto {
   @ApiProperty({
     type: String,
     description: "O email é obrigatório",
@@ -44,10 +45,9 @@ export class CreateUserDto {
 
   @ApiProperty({
     type: String,
-    description: "Confirmar Senha é obrigatória",
+    description: "A confirmação da senha é obrigatória",
   })
   @IsString()
-  @MinLength(8)
   @Match("password", {
     message: CreateUserErrors.PASSWORDS_MATCH,
   })
