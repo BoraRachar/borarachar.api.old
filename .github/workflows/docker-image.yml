@@ -20,8 +20,8 @@ jobs:
           username: ${{ env.DOCKERUSERNAME }}
           password: ${{ env.DOCKERPASS }}
 
-      - name: Build e Push no Azure Container Registry
+      - name: Build e Push Container
         run: |
-          docker build . --file Dockerfile --tag ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:latest
+          docker build . --file ../../Dockerfile --tag ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:latest
           docker tag ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:latest ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}:${{ github.sha }}
           docker push ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}
