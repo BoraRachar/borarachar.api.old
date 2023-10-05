@@ -34,4 +34,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.DOCKERUSERNAME }}/${{ env.IMAGE_NAME }}:latest ${{ secrets.DOCKERUSERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ env.DOCKERUSERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
