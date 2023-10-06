@@ -35,7 +35,7 @@ WORKDIR /usr/src/app
 
 COPY package.json yarn.lock ./
 COPY prisma ./prisma
-COPY ./src/common/env/.env.production ./.env
+#COPY ./src/common/env/.env.production ./.env
 
 
 RUN yarn install --frozen-lockfile --production=true
