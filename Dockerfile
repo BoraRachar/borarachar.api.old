@@ -41,7 +41,8 @@ COPY prisma ./prisma
 RUN yarn install --frozen-lockfile --production=true
 RUN yarn cache clean
 
-COPY /dist ./dist
+#COPY /dist ./dist
+COPY --from=build /app/dist ./dist
 
 EXPOSE 3000
 
