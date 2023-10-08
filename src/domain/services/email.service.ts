@@ -9,7 +9,7 @@ export class EmailService {
 
   async sendEmailBoasVindas(user: User, key: string) {
     console.info("Start Send Email");
-    const confirmUrl = `${process.env.HOST}/user/confirmEmail/${key}`;
+    const confirmUrl = `${process.env.FRONT_HOST}/Successfully`;
     console.info("Url: ", confirmUrl);
 
     const nome =
