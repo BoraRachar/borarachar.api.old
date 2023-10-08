@@ -40,6 +40,8 @@ describe("User Controller test suite", () => {
     } as unknown as Response;
 
     data = {
+      nome: "any-Nome",
+      sobrenome: "any-SobreNome",
       email: "any-email@email.com",
       password: "any-password",
       confirmPassword: "any-password",

@@ -128,6 +128,8 @@ export class UserService {
 
     const user = await this.prisma.user.create({
       data: {
+        nome: data.nome,
+        sobreNome: data.sobrenome,
         email: data.email,
         password: await encryptPass(data.password),
       },
@@ -141,7 +143,6 @@ export class UserService {
       return {
         statusCode: 201,
         message: "Usuario criado com sucesso",
-        url: `${process.env.HOST}/user/confirmEmail/${key.value}`,
       };
     } else {
       throw new HttpException(
