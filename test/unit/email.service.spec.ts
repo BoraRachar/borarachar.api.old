@@ -71,7 +71,7 @@ describe("Email Service Test", () => {
     describe("SendEmail deliver", () => {
         it("SUCCESS - should add emailJob to the queue", async () => {
 
-            const confirmUrl = `${process.env.HOST}/user/confirmEmail/${key}`
+            const confirmUrl = `${process.env.FRONT_HOST}/Successfully`
             const nome =
             user.nome === null ? user.email : `${user.nome} ${user.sobreNome}`;
 

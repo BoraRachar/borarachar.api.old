@@ -1,5 +1,9 @@
-/* eslint-disable prettier/prettier */
-import { BadRequestException, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
 import { User, Prisma, TypeEmail } from "@prisma/client";
 import { EmailService } from "./email.service";
@@ -130,6 +134,8 @@ export class UserService {
 
     const user = await this.prisma.user.create({
       data: {
+        nome: data.nome,
+        sobreNome: data.sobrenome,
         email: data.email,
         password: await encryptPass(data.password),
       },
@@ -175,7 +181,7 @@ export class UserService {
       where: { id: userId },
       data: {
         ...data,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       },
     });
 
@@ -187,9 +193,9 @@ export class UserService {
       where: { email },
     });
 
-    console.info("userExists: ", userExists !== null ? userExists.id : "Não encontrado");
+    console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
-    if (userExists === null)
+    if (!userExists || !userExists.validateUser)
       throw new HttpException("", HttpStatus.NOT_FOUND);
 
     await this.emailService.sendRecoverPasswordEmail(userExists, email);
@@ -201,29 +207,33 @@ export class UserService {
   }
 
   async resetPassword(data: ResetPasswordDto) {
-      const userExists = await this.prisma.user.findUnique({
-        where: { email: data.email },
-      });
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: data.email },
+    });
 
-      console.info("userExists: ", userExists !== null ? userExists.id : "Não encontrado");
+    console.info(
+      "userExists: ",
+      userExists !== null ? userExists.id : "Não encontrado",
+    );
 
-      if (userExists === null) throw new HttpException("", HttpStatus.NOT_FOUND);
+    if (userExists === null) throw new HttpException("", HttpStatus.NOT_FOUND);
 
-      if(data.password != data.confirmPassword) throw new BadRequestException("As senhas inseridas não são iguais!");
+    if (data.password != data.confirmPassword)
+      throw new BadRequestException("As senhas inseridas não são iguais!");
 
-      await this.prisma.user.update({
-        where: {
-          email: data.email
-        },
-        data: {
-          password: await encryptPass(data.password)
-        }
-      });
+    await this.prisma.user.update({
+      where: {
+        email: data.email,
+      },
+      data: {
+        password: await encryptPass(data.password),
+      },
+    });
 
-      return {
-        data: [{email: userExists.email}],
-        statusCode: HttpStatus.OK,
-        message: "Sua senha foi redefinida com sucesso!",
-      };
+    return {
+      data: [{ email: userExists.email }],
+      statusCode: HttpStatus.OK,
+      message: "Sua senha foi redefinida com sucesso!",
+    };
   }
 }
