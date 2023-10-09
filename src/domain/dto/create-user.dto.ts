@@ -21,6 +21,7 @@ export class CreateUserDto {
   @MinLength(3, { message: CompleteSignupErrors.NAME_MIN_LENGTH })
   @MaxLength(50, { message: CompleteSignupErrors.NAME_MAX_LENGTH })
   nome: string;
+
   @ApiProperty({
     type: String,
     description: "O sobrenome é obrigatório",
@@ -29,12 +30,12 @@ export class CreateUserDto {
   @MinLength(3, { message: CompleteSignupErrors.LASTNAME_MIN_LENGTH })
   @MaxLength(50, { message: CompleteSignupErrors.LASTNAME_MAX_LENGTH })
   sobrenome: string;
+
   @ApiProperty({
     type: String,
     description: "O email é obrigatório",
   })
   @IsNotEmpty({ message: CreateUserErrors.EMAIL_REQUIRED })
-  @IsEmail({}, { message: "O email informado nao é válido." })
   @IsEmail({}, { message: "O email informado nao é válido." })
   email: string;
 
