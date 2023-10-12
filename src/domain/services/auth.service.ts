@@ -2,7 +2,6 @@ import { JwtService } from "@nestjs/jwt";
 import { PrismaService } from "./prisma.service";
 import { comparePass } from "../core/hashPassword";
 import {
-  HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -10,7 +9,6 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Login, Token } from "../entities/interfaces/login.interface";
-import * as process from "process";
 import { transformAndCompareDate } from "../../common/helper/utils.helper";
 
 @Injectable()
@@ -84,7 +82,7 @@ export class AuthService {
   }
 
   async validateRefreshToken(token: string) {
-    const { sub, iat, exp } = await this.jwtService.verifyAsync(token, {
+    const { sub, exp } = await this.jwtService.verifyAsync(token, {
       secret: this.configRefresh.secret,
     });
 
@@ -116,7 +114,7 @@ export class AuthService {
         const token: Token = {
           accessToken,
           refreshToken,
-          expiresIn: "1day",
+          expiresIn: "30min",
         };
 
         return {
@@ -124,7 +122,7 @@ export class AuthService {
           statusCode: HttpStatus.OK,
         };
       } else {
-        throw new UnauthorizedException("Token inválioa");
+        throw new UnauthorizedException("Token inválido");
       }
     } catch (error) {
       if (error.name === "JsonWebTokenError") {

@@ -10,7 +10,7 @@ import { EmailService } from "./email.service";
 import { KeyService } from "./key.service";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
-import { TypeKeys, defaultCpf } from "../../common/constants/key.default";
+import { TypeKeys } from "../../common/constants/key.default";
 import { ResetPasswordDto } from "../dto/reset-password.dto";
 
 @Injectable()
@@ -110,10 +110,7 @@ export class UserService {
         },
       });
 
-      const send = await this.emailService.sendEmailBoasVindas(
-        user,
-        newKey.value,
-      );
+      await this.emailService.sendEmailBoasVindas(user, newKey.value);
 
       return true;
     } else {
@@ -195,8 +192,9 @@ export class UserService {
 
     console.info("userExists: ", userExists ? userExists.id : "Não encontrado");
 
-    if (!userExists || !userExists.validateUser)
-      throw new HttpException("", HttpStatus.NOT_FOUND);
+    if (!userExists || !userExists.validateUser) {
+      throw new HttpException("Usuario não encontrado", HttpStatus.NOT_FOUND);
+    }
 
     await this.emailService.sendRecoverPasswordEmail(userExists, email);
 

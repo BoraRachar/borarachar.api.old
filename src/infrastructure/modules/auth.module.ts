@@ -1,4 +1,9 @@
-import { Module } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from "@nestjs/common";
 import { AuthService } from "../../domain/services/auth.service";
 import { LocalStrategy } from "../../domain/core/auth/local.strategy";
 import { PassportModule } from "@nestjs/passport";
@@ -12,6 +17,7 @@ import { SecurityConfig } from "src/common/constants/configs/config.interface";
 import { UserController } from "src/application/controllers/user.controller";
 import { UserService } from "src/domain/services/user.service";
 import { KeyService } from "src/domain/services/key.service";
+import { AuthMiddleware } from "../../application/middlewares/auth.middleware";
 
 @Module({
   imports: [
@@ -40,4 +46,20 @@ import { KeyService } from "src/domain/services/key.service";
   ],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: "login", method: RequestMethod.ALL },
+        { path: "user", method: RequestMethod.POST },
+        { path: "login/refresh-token", method: RequestMethod.POST },
+        { path: "user/resendEmail/:email", method: RequestMethod.ALL },
+        { path: "user/confirmEmail/:token", method: RequestMethod.ALL },
+        { path: "recoverPassword/sendEmail/:email", method: RequestMethod.ALL },
+        { path: "recoverPassword/resetPassword", method: RequestMethod.ALL },
+        { path: "google", method: RequestMethod.ALL },
+      )
+      .forRoutes("*"); // Aplica o middleware a todas as rotas
+  }
+}
