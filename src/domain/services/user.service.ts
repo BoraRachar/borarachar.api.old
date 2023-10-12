@@ -12,6 +12,7 @@ import { JsonObject } from "@prisma/client/runtime/library";
 import { encryptPass } from "../core/hashPassword";
 import { TypeKeys } from "../../common/constants/key.default";
 import { ResetPasswordDto } from "../dto/reset-password.dto";
+import { UserResponseDto } from "../dto/Response/user-response.dto";
 
 @Injectable()
 export class UserService {
@@ -21,13 +22,25 @@ export class UserService {
     private keyService: KeyService,
   ) {}
 
-  async findOneUserbyEmail(
-    email: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+  async findOneUserbyEmail(email: string): Promise<{ [p: string]: unknown }> {
     const user = await this.prisma.user.findUnique({
-      where: email,
+      where: { email: email },
     });
-    return user;
+    const userWithoutPassword = this.exclude(user, ["password"]);
+    return userWithoutPassword;
+  }
+
+  exclude<User, Key extends keyof User>(
+    user: User,
+    keys: Key[],
+  ): { [p: string]: unknown } {
+    return Object.fromEntries(
+      Object.entries(user).filter(([key]) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return !keys.includes(key);
+      }),
+    );
   }
 
   async findOneUserbySocialId(socialId: string): Promise<User | null> {
@@ -37,12 +50,13 @@ export class UserService {
     return user;
   }
 
-  async findOneUserById(userId: string): Promise<User | null> {
+  async findOneUserById(userId: string): Promise<{ [p: string]: unknown }> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
+    const userWithoutPassword = this.exclude(user, ["password"]);
 
-    return user;
+    return userWithoutPassword;
   }
 
   async socialUserCreate(data: Prisma.UserCreateInput): Promise<User> {

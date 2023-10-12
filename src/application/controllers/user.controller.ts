@@ -7,6 +7,7 @@ import {
   Post,
   Res,
   Redirect,
+  Query,
 } from "@nestjs/common";
 import { CreateUserDto } from "../../domain/dto/create-user.dto";
 import { UserService } from "../../domain/services/user.service";
@@ -37,6 +38,16 @@ export class UserController {
     const user = await this.userService.createUser(userInfo);
 
     return response.status(HttpStatus.CREATED).json(user);
+  }
+
+  @Get(":email")
+  @ApiCreatedResponse({ description: "Succesfully" })
+  @ApiUnprocessableEntityResponse({ description: "Bad Request" })
+  @ApiForbiddenResponse({ description: "Unauthorized Request" })
+  async findUser(@Param() params, @Res() response: Response) {
+    const user = await this.userService.findOneUserbyEmail(params.email);
+
+    return response.status(HttpStatus.OK).json(user);
   }
 
   @Get("confirmEmail/:key")
