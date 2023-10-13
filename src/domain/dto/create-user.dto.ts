@@ -35,7 +35,6 @@ export class CreateUserDto {
   })
   @IsNotEmpty({ message: CreateUserErrors.EMAIL_REQUIRED })
   @IsEmail({}, { message: "O email informado nao é válido." })
-  @IsEmail({}, { message: "O email informado nao é válido." })
   email: string;
 
   @ApiProperty({

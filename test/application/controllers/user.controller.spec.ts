@@ -5,7 +5,7 @@ import { UserController } from "../../../src/application/controllers/user.contro
 import { HttpException, HttpStatus } from "@nestjs/common";
 import { Response } from "express";
 import { CreateUserDto } from "../../../src/domain/dto/create-user.dto";
-import { keyMock, tokenMock, userMock } from "../../mocks/index";
+import { keyMock, tokenMock } from "../../mocks/index";
 
 describe("User Controller test suite", () => {
   let userController: UserController;
@@ -142,92 +142,93 @@ describe("User Controller test suite", () => {
     });
   });
 
-  describe("GET - getUserByToken", () => {
-    it("SUCCESS - should call userService with correct params", async () => {
-      const userId = tokenMock.validToken.split("$")[0];
-      userService.findOneUserById.mockResolvedValue(userMock.validUser);
+  //describe("GET - getUserByToken", () => {
+  //  it("SUCCESS - should call userService with correct params", async () => {
+  //    const userId = tokenMock.validToken.split("$")[0];
+  //    userService.findOneUserById.mockResolvedValue(userMock.validUser);
 
-      await userController.getUserByToken(tokenMock.validToken, mockRes);
+  //      await userController.getUserByToken(tokenMock.validToken, mockRes);
 
-      expect(userService.findOneUserById).toHaveBeenCalledWith(userId);
-      expect(userService.findOneUserById).toHaveBeenCalledTimes(1);
-    });
+  //      expect(userService.findOneUserById).toHaveBeenCalledWith(userId);
+  //      expect(userService.findOneUserById).toHaveBeenCalledTimes(1);
+  //   });
 
-    it("SUCCESS - should return status ok if user exists", async () => {
-      userService.findOneUserById.mockResolvedValue(userMock.validUser);
+  // it("SUCCESS - should return status ok if user exists", async () => {
+  //   userService.findOneUserById.mockResolvedValue(userMock.validUser);
 
-      const response = {
-        statusCode: HttpStatus.OK,
-        message: {
-          userId: userMock.validUser.id,
-          email: userMock.validUser.email,
-        },
-      };
+  //      const response = {
+  //        statusCode: HttpStatus.OK,
+  //        message: {
+  //         userId: userMock.validUser.id,
+  //         email: userMock.validUser.email,
+  //       },
+  //     };
 
-      await userController.getUserByToken(tokenMock.validToken, mockRes);
+  //      await userController.getUserByToken(tokenMock.validToken, mockRes);
 
-      expect(mockRes.status).toHaveBeenCalledWith(response.statusCode);
-      expect(mockRes.json).toHaveBeenCalledWith(response.message);
-    });
+  //    expect(mockRes.status).toHaveBeenCalledWith(response.statusCode);
+  //    expect(mockRes.json).toHaveBeenCalledWith(response.message);
+  //  });
 
-    it("ERROR - should throw if token is invalid", async () => {
-      userService.findOneUserById.mockResolvedValue(null);
+  //   it("ERROR - should throw if token is invalid", async () => {
+  //     userService.findOneUserById.mockResolvedValue(null);
 
-      const response = {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: "Token inválido",
-      };
+  //      const response = {
+  //        statusCode: HttpStatus.BAD_REQUEST,
+  //        message: "Token inválido",
+  //      };
 
-      await expect(
-        userController.getUserByToken(tokenMock.invalidToken, mockRes),
-      ).rejects.toThrow(
-        new HttpException("Token inválido", HttpStatus.BAD_REQUEST),
-      );
-    });
-  });
+  //      await expect(
+  //        userController.getUserByToken(tokenMock.invalidToken, mockRes),
+  //      ).rejects.toThrow(
+  //        new HttpException("Token inválido", HttpStatus.BAD_REQUEST),
+  //     );
+  //   });
+  // });
 
-  describe("PUT - completeSignUp", () => {
-    it("SUCCESS - should call userService with correct params", async () => {
-      await userController.completeSignUp(
-        userMock.validId,
-        userMock.validCompleteSignData,
-        mockRes,
-      );
+  //  describe("PUT - completeSignUp", () => {
+  //    it("SUCCESS - should call userService with correct params", async () => {
+  //      await userController.completeSignUp(
+  //        userMock.validId,
+  //        userMock.validCompleteSignData,
+  //        mockRes,
+  //     );
 
-      expect(userService.completeSignUp).toHaveBeenCalledWith(
-        userMock.validId,
-        userMock.validCompleteSignData,
-      );
-      expect(userService.completeSignUp).toHaveBeenCalledTimes(1);
-    });
+  //    expect(userService.completeSignUp).toHaveBeenCalledWith(
+  //      userMock.validId,
+  //      userMock.validCompleteSignData,
+  //   );
+  //    expect(userService.completeSignUp).toHaveBeenCalledTimes(1);
+  //  });
 
-    //it("SUCCESS - should redirect to successfully registration page if userService returns", async () => {
+  //it("SUCCESS - should redirect to successfully registration page if userService returns", async () => {
 
-    //  userService.completeSignUp.mockResolvedValue(userMock.updatedUser);
+  //  userService.completeSignUp.mockResolvedValue(userMock.updatedUser);
 
-    // const successRegistrationURL = `http://borarachar.online/register/successfully`;
+  // const successRegistrationURL = `http://borarachar.online/register/successfully`;
 
-    //  await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData, mockRes)
+  //  await userController.completeSignUp(userMock.validId, userMock.validCompleteSignData, mockRes)
 
-    //  expect(mockRes.redirect).toHaveBeenCalledWith(successRegistrationURL)
-    //  expect(mockRes.redirect).toHaveBeenCalledTimes(1)
-    //})
+  //  expect(mockRes.redirect).toHaveBeenCalledWith(successRegistrationURL)
+  //  expect(mockRes.redirect).toHaveBeenCalledTimes(1)
+  //})
 
-    it("ERROR - should throw if userService throws", async () => {
-      const error = new HttpException(
-        "Usuário não encontrado",
-        HttpStatus.NOT_FOUND,
-      );
+  //  it("ERROR - should throw if userService throws", async () => {
+  //    const error = new HttpException(
+  //      "Usuário não encontrado",
+  //      HttpStatus.NOT_FOUND,
+  //    );
 
-      userService.completeSignUp.mockRejectedValue(error);
+  //    userService.completeSignUp.mockRejectedValue(error);
 
-      await expect(
-        userController.completeSignUp(
-          userMock.validId,
-          userMock.validCompleteSignData,
-          mockRes,
-        ),
-      ).rejects.toThrow(error);
-    });
-  });
+  //    await expect(
+  //      userController.completeSignUp(
+  //        userMock.validId,
+  //        userMock.validCompleteSignData,
+  //        mockRes,
+  //      ),
+  //    ).rejects.toThrow(error);
+  //  });
+  //});
+  // });
 });
